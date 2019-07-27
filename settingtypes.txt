@@ -1,0 +1,5 @@
+commoditymarket_enable_kings_market (Enable King's Market) bool false
+commoditymarket_enable_night_market (Enable Night Market) bool false
+commoditymarket_enable_caravan_market (Enable Trader's Caravan) bool true
+commoditymarket_enable_goblin_market (Enable Goblin Exchange) bool false
+commoditymarket_enable_under_market (Enable Under Market) bool false
