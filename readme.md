@@ -31,11 +31,11 @@ Note that tools cannot be added to the market inventory if they have any wear on
 
 A buy order is an offer to give a certain amount of currency in exchange for a particular type of item. To place a buy order go to the "Market Orders" tab of the market's interface and select the item from the list of items on the market. If the item isn't listed it may be that the market is simply "unaware" of the item's existence; try placing an example of the item into your personal inventory and if the item is permitted on the market a new entry will be added to Market Orders.
 
-Enter the quanitity and price you desire and then click the "buy" button to place a buy order.
+Enter the quantity and price you desire and then click the "buy" button to place a buy order.
 
 If there are already "sell" orders for the item when you place a buy order, some or all of your buy order might be immediately fulfilled provided you are offering a sufficient price. Your purchases will be made at the price that the sell orders have been set to - if you were willing to pay 15 units of currency per item but someone was already offering to sell for 2 units of currency per item, you only pay 2 units for each of that offer's items.
 
-If there aren't enough compatible sell orders to fulfil your buy order, the remainder will be placed into the market and made available for future sellers to see and fulfil if they agree to your price. Your buy order will immediately deduct the currency required for it from your account's balance, but if you cancel your order you will get that currency back - it's not gone until the order is actually fulfilled.
+If there aren't enough compatible sell orders to fulfill your buy order, the remainder will be placed into the market and made available for future sellers to see and fulfill if they agree to your price. Your buy order will immediately deduct the currency required for it from your account's balance, but if you cancel your order you will get that currency back - it's not gone until the order is actually fulfilled.
 
 Double-click on your order in the orders list to cancel it.
 
@@ -66,4 +66,4 @@ The file "default_markets.lua" contains a number of pre-defined markets that pro
 * Goblin Exchange - a strange marketplace that uses coal as a currency
 * Undermarket - where dark powers make their trades, using Mese as a currency
 
-All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators, they have on_dig methods that prevent them from being removed and don't have crafting recipes.
+All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators, they have on_dig methods that prevent them from being removed and don't have crafting recipes. Modifying these markets or creating your own from scratch should hopefully be a fairly straightforward task, however.
