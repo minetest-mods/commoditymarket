@@ -2,6 +2,8 @@ This mod implements marketplaces where players can post buy and sell offers for 
 
 The basic market interface is the same across all markets and market types, but this mod allows for a variety of different ways that markets can be configured to support different playstyles. Markets can have restrictions on what they will allow to be bought and sold, different types of "currency", and can share a common inventory across multiple locations or can be localized to just one spot at the discretion of the server owner.
 
+![](screenshot.png)
+
 ## Currency
 
 Each market has one or more "currency" items defined that are treated differently from the other items that can be bought and sold there. Currency items are translated into a player's currency balance rather than being bought and sold directly.
