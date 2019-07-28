@@ -255,17 +255,16 @@ local get_info_formspec = function(market, account)
 		"size[10,10]",
 		"tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;1;false;true]",
 		"textarea[0.5,0.5;9.5,1.5;;Description:;"..market.def.long_description.."]",
-		-- TODO: logging temporarily disabled, it was causing minetest.serialize to generate invalid output for some reason
-		--"textarea[0.5,2.5;9.5,6;;Your Recent Purchases and Sales:;",
+		"textarea[0.5,2.5;9.5,6;;Your Recent Purchases and Sales:;",
 	}
---	if next(account.log) then
---		for _, log_entry in ipairs(account.log) do
---			formspec[#formspec+1] = log_to_string(market, log_entry) .. "\n"
---		end
---	else
---		formspec[#formspec+1] = "No logged activites in this market yet"
---	end
---	formspec[#formspec+1] = "]"
+	if next(account.log) then
+		for _, log_entry in ipairs(account.log) do
+			formspec[#formspec+1] = log_to_string(market, log_entry) .. "\n"
+		end
+	else
+		formspec[#formspec+1] = "No logged activites in this market yet"
+	end
+	formspec[#formspec+1] = "]"
 	
 	return table.concat(formspec)
 end

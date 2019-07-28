@@ -77,21 +77,23 @@ local get_account = function(market, player_name)
 	return account	
 end
 
+-- Caution: the data structures produced by sale logging caused me to discover
+-- issue https://github.com/minetest/minetest/issues/8719 with minetest.serialize()
+-- I'm working around it by using the code in persistence.lua instead
 local log_sale = function(item, quantity, price, purchaser, seller)
--- TODO: disabled temporarily, the log code should work in theory but in practice minetest.serialize was generating invalid output for some reason.
---	local log_entry = {item=item, quantity=quantity, price=price, purchaser=purchaser, seller=seller, timestamp = minetest.get_gametime()}
---	local purchaser_log = purchaser.log
---	local seller_log = seller.log
---	table.insert(purchaser_log, log_entry)
---	if #purchaser_log > log_length_limit then
---		table.remove(purchaser_log, 1)
---	end
---	if (purchaser ~= seller) then
---		table.insert(seller_log, log_entry)
---		if #seller_log > log_length_limit then
---			table.remove(seller_log, 1)
---		end
---	end
+	local log_entry = {item=item, quantity=quantity, price=price, purchaser=purchaser, seller=seller, timestamp = minetest.get_gametime()}
+	local purchaser_log = purchaser.log
+	local seller_log = seller.log
+	table.insert(purchaser_log, log_entry)
+	if #purchaser_log > log_length_limit then
+		table.remove(purchaser_log, 1)
+	end
+	if (purchaser ~= seller) then
+		table.insert(seller_log, log_entry)
+		if #seller_log > log_length_limit then
+			table.remove(seller_log, 1)
+		end
+	end
 end
 
 local remove_orders_by_account = function(orders, account)
@@ -379,29 +381,23 @@ local buy = function(self, player_name, item, quantity, price)
 	return add_buy(self, get_account(self, player_name), item, price, quantity)
 end
 
+-- Using this instead of minetest.serialize because of https://github.com/minetest/minetest/issues/8719
+local MP = minetest.get_modpath(minetest.get_current_modname())
+local persistence_store, persistence_load = dofile(MP.."/persistence.lua")
+
 local load_market_data = function(marketname)
 	local path = minetest.get_worldpath()
 	local filename = path .. "\\market_"..marketname..".lua"
-	local file = loadfile(filename) -- returns nil if the file doesn't exist
-	if file then
-		return file()
-	else
-		return nil
-	end
+	return persistence_load(filename)
 end
 
 local save_market_data = function(market)
 	local path = minetest.get_worldpath()
 	local filename = path .. "\\market_"..market.name..".lua"
-	local file, err = io.open(filename, "w")
-	if err ~= nil then
-		minetest.log("error", "[commoditymarket] Could not save market to \"" .. filename .. "\"")
-		return false
-	end
 	local data = {}
 	data.player_accounts = market.player_accounts
 	data.orders_for_items = market.orders_for_items
-	file:write(minetest.serialize(data))
+	persistence_store(filename, data)
 	return true
 end
 
@@ -483,8 +479,14 @@ commoditymarket.register_market = function(market_name, market_def)
 			return 0
 		end,
 		allow_put = function(inv, listname, index, stack, player)
-			-- Currency items are always allowed
 			local item = stack:get_name()
+			
+			-- reject unknown items
+			if minetest.registered_items[item] == nil then
+				return 0
+			end
+		
+			-- Currency items are always allowed
 			if new_market.def.currency[item] then
 				return stack:get_count()
 			end
