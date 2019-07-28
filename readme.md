@@ -55,6 +55,7 @@ This mod has several commands that a server administrator can use:
 
 * market.removeitem marketname item -- cancels all existing buy and sell orders for an item and removes its entry from the market tab. This is useful if you've changed what items are permitted in a particular market and need to clear out items that are no longer allowed.
 * market.show marketname -- opens the market's formspec
+* market.list -- lists the marketnames of all registered markets
 
 ## Registering a market
 
