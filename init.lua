@@ -16,3 +16,17 @@ minetest.register_chatcommand("market.show", {
 		minetest.show_formspec(name, "commoditymarket:"..param..":"..name, formspec)
 	end,
 })
+
+minetest.register_chatcommand("market.list", {
+	params = "",
+	privs = {server=true},
+	decription = "list all registered markets",
+	func = function(name, param)
+		local list = {}
+		for marketname, def in pairs(commoditymarket.registered_markets) do
+			table.insert(list, marketname)
+		end
+		table.sort(list)
+		minetest.chat_send_player(name, "Regstered markets: " .. table.concat(list, ", "))
+	end,
+})

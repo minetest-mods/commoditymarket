@@ -54,6 +54,8 @@ end
 -- Market formspec
 --------------------------------------------------------------------------------------------------------
 
+local truncate_item_names_to = 30
+
 local compare_market_item = function(mkt1, mkt2) return mkt1.item < mkt2.item end
 local compare_market_desc = function(mkt1, mkt2)
 	local def1 = minetest.registered_items[mkt1.item] or {}
@@ -149,15 +151,15 @@ local get_market_formspec = function(market, account)
 	-- Show list of item market summaries
 	for i, row in ipairs(market_list) do
 		local item_display = row.item
-		if item_display:len() > 20 then
-			item_display = item_display:sub(1,18).."..."
+		if item_display:len() > truncate_item_names_to then
+			item_display = item_display:sub(1,truncate_item_names_to-2).."..."
 		end
 		local n = #formspec+1
 		formspec[n] = "," .. item_display
 		local def = minetest.registered_items[row.item] or {}
 		local desc_display = def.description or "Unknown Item"
-		if desc_display:len() > 20 then
-			desc_display = desc_display:sub(1,18).."..."
+		if desc_display:len() > truncate_item_names_to then
+			desc_display = desc_display:sub(1,truncate_item_names_to-2).."..."
 		end
 		formspec[n+1] = "," .. desc_display
 		formspec[n+2] = ",#00FF00"
