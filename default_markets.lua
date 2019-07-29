@@ -14,7 +14,7 @@ local kings_def = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "Au",
+	currency_symbol = "\u{263C}", -- Alchemical symbol for gold
 	allow_item = function(item)
 		if item:sub(1,13) == "default:sword" or item:sub(1,4) == "tnt:" then
 			return false
@@ -65,7 +65,7 @@ local night_def = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "Au",
+	currency_symbol = "\u{263C}",
 	inventory_limit = 10000,
 	initial_items = default_items,
 }
@@ -111,7 +111,7 @@ local caravan_def = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "Au",
+	currency_symbol = "\u{263C}",
 	inventory_limit = 1000,
 	initial_items = default_items,
 }
@@ -154,7 +154,7 @@ local goblin_def = {
 	currency = {
 		["default:coal_lump"] = 100
 	},
-	currency_symbol = "cC",
+	currency_symbol = "\u{00A2}",
 	inventory_limit = 1000,
 }
 
