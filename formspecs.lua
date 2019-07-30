@@ -36,7 +36,7 @@ local get_account_formspec = function(market, account)
 	for item, quantity in pairs(account.inventory) do
 		local def = minetest.registered_items[item]
 		local description
-		if def then description = def.description else description = "Unknown Item" end
+		if def then description = def.description:gsub("\n", " ") else description = "Unknown Item" end
 		local icon = get_icon(item)
 		table.insert(inventory, {item=item, quantity=quantity, icon=icon, description=description})
 		inventory_count = inventory_count + quantity
@@ -83,7 +83,7 @@ local get_account_formspec = function(market, account)
 		if show_itemnames then
 			formspec[#formspec+1] = "," .. entry.item
 		end	
-		formspec[#formspec+1] = "," .. entry.description .. "," .. entry.quantity
+		formspec[#formspec+1] = "," .. entry.description:gsub("\n", " ") .. "," .. entry.quantity
 	end	
 	
 	formspec[#formspec+1] = "]container[1.1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
@@ -242,7 +242,7 @@ local get_market_formspec = function(market, account)
 		end
 		
 		local def = minetest.registered_items[row.item] or {}
-		local desc_display = def.description or "Unknown Item"
+		local desc_display = def.description:gsub("\n", " ") or "Unknown Item"
 		if desc_display:len() > truncate_length then
 			desc_display = desc_display:sub(1,truncate_length-2).."..."
 		end
@@ -287,7 +287,7 @@ local get_market_formspec = function(market, account)
 			desc_display = selected
 		else
 			local def = minetest.registered_items[selected_row.item] or {}
-			desc_display = def.description or "Unknown Item"
+			desc_display = def.description:gsub("\n", " ") or "Unknown Item"
 		end
 
 		-- player inventory for this item and for currency
