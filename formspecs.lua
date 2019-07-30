@@ -473,7 +473,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	
 	if fields.orders then
 		local ordersevent = minetest.explode_table_event(fields.orders)
-		if ordersevent.type == "DCL" then
+		if ordersevent.type == "DCL" and ordersevent.column > 0 then
 			local selected_idx = ordersevent.row - 1 -- account for header
 			local selected_row = market.orders_for_items[account.selected] -- sell orders come first
 			local sell_orders = selected_row.sell_orders
@@ -518,16 +518,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	-- player clicked in their inventory table, may need to give him his stuff back 
 	if fields.inventory then
 		local invevent = minetest.explode_table_event(fields.inventory)
-		if invevent.type == "DCL" then
+		if invevent.type == "DCL" and invevent.column > 0 then
 			local col_count
 			local show_itemnames = account.show_itemnames == "true"
 			if show_itemnames then
-				col_count = 4
+				col_count = 8
 			else
-				col_count = 3
+				col_count = 6
 			end
-		
-			local index = invevent.row*col_count + math.ceil(invevent.column/col_count) - col_count*2
+			local index = math.floor(((invevent.row-1)*col_count + invevent.column - 1)/(col_count/2)) - 1
 			local account = market:get_account(name)
 			local inventory = {}
 			for item, quantity in pairs(account.inventory) do
