@@ -22,6 +22,7 @@ local kings_def = {
 		return true
 	end,
 	inventory_limit = 100000,
+	--sell_limit =, -- no sell limit for the King's Market
 	initial_items = default_items,
 }
 
@@ -67,6 +68,7 @@ local night_def = {
 	},
 	currency_symbol = "\u{263C}",
 	inventory_limit = 10000,
+	--sell_limit =, -- no sell limit for the Night Market
 	initial_items = default_items,
 }
 
@@ -113,6 +115,7 @@ local caravan_def = {
 	},
 	currency_symbol = "\u{263C}",
 	inventory_limit = 1000,
+	sell_limit = 1000,
 	initial_items = default_items,
 }
 
@@ -156,6 +159,7 @@ local goblin_def = {
 	},
 	currency_symbol = "\u{00A2}",
 	inventory_limit = 1000,
+	--sell_limit =, -- no sell limit
 }
 
 commoditymarket.register_market("goblin", goblin_def)
@@ -194,6 +198,7 @@ local undermarket_def = {
 	},
 	currency_symbol = "\u{20A5}",
 	inventory_limit = 10000,
+	--sell_limit =, -- no sell limit
 }
 
 commoditymarket.register_market("under", undermarket_def)

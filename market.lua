@@ -172,8 +172,23 @@ end
 local add_sell = function(market, account, item, price, quantity)
 	price = tonumber(price)
 	quantity = tonumber(quantity)
+	
+	local sell_limit = market.def.sell_limit
+	local sell_limit_exceeded
+	if sell_limit then
+		local total_sell = 0
+		for item, orders in pairs(market.orders_for_items) do
+			for _, order in ipairs(orders.sell_orders) do
+				if order.account == account then
+					total_sell = total_sell + order.quantity
+				end
+			end
+		end
+		sell_limit_exceeded = total_sell + quantity > sell_limit
+	end
+	
 	-- validate that this sell order is possible
-	if price < 0 or not remove_inventory_from_account(account, item, quantity) then
+	if sell_limit_exceeded or price < 0 or not remove_inventory_from_account(account, item, quantity) then
 		return false
 	end
 

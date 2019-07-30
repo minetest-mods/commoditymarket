@@ -185,23 +185,21 @@ local make_marketlist = function(market, account)
 end
 
 local get_market_formspec = function(market, account)
+	local market_def = market.def
 	local selected = account.selected
 	local market_list = make_marketlist(market, account)
 	local show_itemnames = account.show_itemnames == "true"
 
 	local formspec = {
 		"size[10,10]",
-		"tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;3;false;true]",
+		"tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;3;false;true]",
 		"tablecolumns["
 	}
 	
 	-- column definitions
-	formspec[#formspec+1] = "image," -- icon
+	formspec[#formspec+1] = "image" -- icon
 	for i, row in ipairs(market_list) do
-		if i > 1 then
-			formspec[#formspec+1] = ","
-		end
-		formspec[#formspec+1] = i .. "=" .. get_icon(row.item)
+		formspec[#formspec+1] = "," .. i .. "=" .. get_icon(row.item)
 	end
 	formspec[#formspec+1] = ";"
 	if show_itemnames then
@@ -294,10 +292,24 @@ local get_market_formspec = function(market, account)
 
 		-- player inventory for this item and for currency
 		formspec[#formspec+1] = "label[0.1,5.1;"..desc_display.."\nIn inventory: "
-			.. tostring(account.inventory[selected] or 0) .."\nBalance: "..market.def.currency_symbol..account.balance .."]"
+			.. tostring(account.inventory[selected] or 0) .."\nBalance: "..market_def.currency_symbol..account.balance .."]"
 		
 		-- buy/sell controls
 		formspec[#formspec+1] = "container[6,5]"
+		local sell_limit = market_def.sell_limit
+		if sell_limit then
+			local total_sell = 0
+			for item, orders in pairs(market.orders_for_items) do
+				for _, order in ipairs(orders.sell_orders) do
+					if order.account == account then
+						total_sell = total_sell + order.quantity
+					end
+				end
+			end
+			formspec[#formspec+1] = "label[0,0;Sell limit: ".. total_sell .. "/" .. sell_limit .."]"
+				.."tooltip[0,0;2,0.25;This market limits the total number of items a given seller can have for sale at a time.\nYou have "
+				..sell_limit-total_sell.." items remaining. Cancel old sell orders to free up space.]"
+		end
 		formspec[#formspec+1] = "button[0,0.5;1,1;buy;Buy]field[1.3,0.85;1,1;quantity;Quantity;]"
 			.."field[2.3,0.85;1,1;price;Price;]button[3,0.5;1,1;sell;Sell]"
 			.."field_close_on_enter[quantity;false]field_close_on_enter[price;false]"
