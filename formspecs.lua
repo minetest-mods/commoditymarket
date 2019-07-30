@@ -21,6 +21,15 @@ local get_icon = function(item)
 	return "unknown_item.png"
 end
 
+local get_item_description = function(item)
+	local def = minetest.registered_items[item]
+	if def then
+		return def.description:gsub("\n", " ")
+	end
+	return "Unknown Item"
+end
+
+
 
 -- Inventory formspec
 -------------------------------------------------------------------------------------
@@ -34,11 +43,8 @@ local get_account_formspec = function(market, account)
 	local inventory = {}
 	local inventory_count = 0
 	for item, quantity in pairs(account.inventory) do
-		local def = minetest.registered_items[item]
-		local description
-		if def then description = def.description:gsub("\n", " ") else description = "Unknown Item" end
 		local icon = get_icon(item)
-		table.insert(inventory, {item=item, quantity=quantity, icon=icon, description=description})
+		table.insert(inventory, {item=item, quantity=quantity, icon=icon, description=get_item_description(item)})
 		inventory_count = inventory_count + quantity
 	end
 	if show_itemnames then
@@ -525,7 +531,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local account = market:get_account(name)
 			local inventory = {}
 			for item, quantity in pairs(account.inventory) do
-				table.insert(inventory, {item=item, quantity=quantity})
+				table.insert(inventory, {item=item, quantity=quantity, description=get_item_description(item)})
 			end
 			if show_itemnames then
 				table.sort(inventory, inventory_item_comp)
