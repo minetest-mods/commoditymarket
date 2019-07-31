@@ -6,6 +6,8 @@ local gold_coins_required = false
 local default_items = {"default:axe_bronze","default:axe_diamond","default:axe_mese","default:axe_steel","default:axe_steel","default:axe_stone","default:axe_wood","default:pick_bronze","default:pick_diamond","default:pick_mese","default:pick_steel","default:pick_stone","default:pick_wood","default:shovel_bronze","default:shovel_diamond","default:shovel_mese","default:shovel_steel","default:shovel_stone","default:shovel_wood","default:sword_bronze","default:sword_diamond","default:sword_mese","default:sword_steel","default:sword_stone","default:sword_wood", "default:blueberries", "default:book", "default:bronze_ingot", "default:clay_brick", "default:clay_lump", "default:coal_lump", "default:copper_ingot", "default:copper_lump", "default:diamond", "default:flint", "default:gold_ingot", "default:gold_lump", "default:iron_lump", "default:mese_crystal", "default:mese_crystal_fragment", "default:obsidian_shard", "default:paper", "default:steel_ingot", "default:stick", "default:tin_ingot", "default:tin_lump", "default:acacia_tree", "default:acacia_wood", "default:apple", "default:aspen_tree", "default:aspen_wood", "default:blueberry_bush_sapling", "default:bookshelf", "default:brick", "default:bronzeblock", "default:bush_sapling", "default:cactus", "default:clay", "default:coalblock", "default:cobble", "default:copperblock", "default:desert_cobble", "default:desert_sand", "default:desert_sandstone", "default:desert_sandstone_block", "default:desert_sandstone_brick", "default:desert_stone", "default:desert_stone_block", "default:desert_stonebrick", "default:diamondblock", "default:dirt", "default:glass", "default:goldblock", "default:gravel", "default:ice", "default:junglegrass", "default:junglesapling", "default:jungletree", "default:junglewood", "default:ladder_steel", "default:ladder_wood", "default:large_cactus_seedling", "default:mese", "default:mese_post_light", "default:meselamp", "default:mossycobble", "default:obsidian", "default:obsidian_block", "default:obsidian_glass", "default:obsidianbrick", "default:papyrus", "default:pine_sapling", "default:pine_tree", "default:pine_wood", "default:sand", "default:sandstone", "default:sandstone_block", "default:sandstonebrick", "default:sapling", "default:silver_sand", "default:silver_sandstone", "default:silver_sandstone_block", "default:silver_sandstone_brick", "default:snow", "default:snowblock", "default:steelblock", "default:stone", "default:stone_block", "default:stonebrick", "default:tinblock", "default:tree", "default:wood",}
 
 ------------------------------------------------------------------------------
+-- King's Market
+
 if minetest.settings:get_bool("commoditymarket_enable_kings_market") then
 local kings_def = {
 	description = "King's Market",
@@ -57,6 +59,7 @@ minetest.register_node("commoditymarket:kings_market", {
 })
 end
 -------------------------------------------------------------------------------
+-- Night Market
 
 if minetest.settings:get_bool("commoditymarket_enable_night_market") then
 local night_def = {
@@ -102,9 +105,13 @@ minetest.register_node("commoditymarket:night_market", {
 	end,
 })
 end
+
 -------------------------------------------------------------------------------
 if minetest.settings:get_bool("commoditymarket_enable_caravan_market", true) then
--- "Trader's Caravan" - small-capacity market that players can build
+-- "Trader's Caravan" - small-capacity market that players can summon
+
+local time_until_caravan = 120 -- caravan arrives in two minutes
+local dwell_time = 600 -- caravan leaves ten minutes after last usage
 
 local caravan_def = {
 	description = "Trader's Caravan",
@@ -122,11 +129,11 @@ local caravan_def = {
 gold_coins_required = true
 
 minetest.register_craft({
-	output = "commoditymarket:caravan_market",
+	output = "commoditymarket:caravan_post",
 	recipe = {
-		{'', "default:gold_ingot", ''},
-		{'group:wood', "default:chest_locked", 'group:wood'},
-		{'group:wood', 'group:wood', 'group:wood'},
+		{'group:wood', 'group:wood', ''},
+		{'group:wood', "default:gold_ingot", ''},
+		{'group:wood', "default:chest_locked", ''},
 	}
 })
 
@@ -140,13 +147,148 @@ minetest.register_node("commoditymarket:caravan_market", {
 		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_trade.png",},
 	paramtype2 = "facedir",
 	is_ground_content = false,
+	groups = {choppy = 2, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1},
+	sounds = default.node_sound_wood_defaults(),
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		commoditymarket.show_market("caravan", clicker:get_player_name())
+		local timer = minetest.get_node_timer(pos)
+		timer:start(dwell_time)
+	end,
+	on_timer = function(pos, elapsed)
+		local node = minetest.get_node(pos)
+		local facedir = node.param2
+		local dir = minetest.facedir_to_dir(facedir)
+		local target = vector.add(pos, vector.multiply(dir,-2))
+		local target_node = minetest.get_node(target)
+		if target_node.name == "commoditymarket:caravan_post" then
+			local meta = minetest.get_meta(target)
+			meta:set_string("infotext", "Right-click to summon another caravan")
+		end
+		minetest.set_node(pos, {name="air"})
+		minetest.sound_play("commoditymarket_register_closed", {
+			pos = pos,
+			gain = 1.0,  -- default
+			max_hear_distance = 32,  -- default, uses an euclidean metric
+		})
+	end,
+})
+
+-- This one doesn't delete itself, server admins can place a permanent instance of it that way. Maybe inside towns next to bigger stationary markets.
+minetest.register_node("commoditymarket:caravan_market_permanent", {
+	description = "Trader's Caravan",
+	_doc_items_longdesc = caravan_def.long_description,
+	tiles = {"default_chest_top.png","default_chest_top.png",
+		"default_chest_side.png^commoditymarket_caravan.png","default_chest_side.png^commoditymarket_caravan.png",
+		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_trade.png",},
+	paramtype2 = "facedir",
+	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 1,},
 	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		commoditymarket.show_market("caravan", clicker:get_player_name())	
+		commoditymarket.show_market("caravan", clicker:get_player_name())
+	end,
+})
+
+-- is a 3x3 area centered around pos clear of obstruction and has usable ground?
+local is_suitable_caravan_space = function(pos)
+	-- walkable ground?
+	for x = pos.x - 1, pos.x + 1, 1 do
+		for z = pos.z - 1, pos.z + 1, 1 do
+			local node = minetest.get_node({x=x, y=pos.y-1, z=z})
+			local node_def = minetest.registered_nodes[node.name]
+			if node_def == nil or node_def.walkable ~= true then return false end
+		end
+	end
+	-- air in the rest?
+	for y = pos.y, pos.y+2, 1 do
+		for x = pos.x - 1, pos.x + 1, 1 do
+			for z = pos.z - 1, pos.z + 1, 1 do
+				local node = minetest.get_node({x=x, y=y, z=z})
+				if node.name ~= "air" then return false end
+			end
+		end
+	end
+	return true
+end
+
+minetest.register_node("commoditymarket:caravan_post", {
+	description = "Trading Post",
+	_long_items_longdesc = "This post signals passing caravan traders that customers can be found here, and signals to customers that caravan traders can be found here. If no caravan is present, right-click to summon one.",
+	tiles = {"commoditymarket_sign.png^[transformR90", "commoditymarket_sign.png^[transformR270",
+		"commoditymarket_sign.png^commoditymarket_caravan_sign.png", "commoditymarket_sign.png^commoditymarket_caravan_sign.png^[transformFX",
+		"commoditymarket_sign_post.png", "commoditymarket_sign_post.png"},
+	groups = {choppy = 2, oddly_breakable_by_hand = 1,},
+	sounds = default.node_sound_wood_defaults(),
+	paramtype= "light",
+	paramtype2 = "facedir",
+	drawtype = "nodebox",
+	node_box = {
+        type = "fixed",
+        fixed = {
+			{-0.125,-0.5,-0.5,0.125,2.0625,-0.25},
+			{-0.0625,1.4375,-0.25,0.0625,2.0,0.5},
+		},
+    },
+	on_construct = function(pos)
+		local timer = minetest.get_node_timer(pos)
+		timer:start(1.0)
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		local timer = minetest.get_node_timer(pos)
+		timer:start(1.0)
+	end,
+	on_timer = function(pos, elapsed)
+		local node = minetest.get_node(pos)
+		local meta = minetest.get_meta(pos)
+		if node.name ~=  "commoditymarket:caravan_post" then
+			return -- the node was removed
+		end
+		local facedir = node.param2
+		local dir = minetest.facedir_to_dir(facedir)
+		local target = vector.add(pos, vector.multiply(dir,2))
+
+		local target_node = minetest.get_node(target)
+		if target_node.name == "commoditymarket:caravan_market" then
+			-- It's already here somehow, shut down timer.
+			meta:set_string("infotext", "")
+			meta:set_float("wait_time", 0)
+			return
+		end
+		
+		local is_suitable_space = is_suitable_caravan_space(target)
+			
+		if not is_suitable_space then
+			meta:set_string("infotext", "Indicated parking area isn't suitable.\nA 3x3 open space with solid ground\nis required for a caravan.")
+			meta:set_float("wait_time", 0)
+			local timer = minetest.get_node_timer(pos)
+			timer:start(1.0)
+			return
+		end
+		
+		local wait_time = (meta:get_float("wait_time") or 0) + elapsed
+		meta:set_float("wait_time", wait_time)
+		if wait_time < time_until_caravan then
+			meta:set_string("infotext", "Caravan summoned\nETA: " .. math.floor(time_until_caravan - wait_time) .. " seconds.")
+			local timer = minetest.get_node_timer(pos)
+			timer:start(1.0)
+			return
+		end
+		
+		-- spawn the caravan. We've already established that the target pos is clear.
+		minetest.set_node(target, {name="commoditymarket:caravan_market", param2=facedir})
+		minetest.sound_play("commoditymarket_register_opened", {
+			pos = target,
+			gain = 1.0,  -- default
+			max_hear_distance = 32,  -- default, uses an euclidean metric
+		})
+		local timer = minetest.get_node_timer(target)
+		timer:start(dwell_time)
+		meta:set_string("infotext", "")
+		meta:set_float("wait_time", 0)
 	end,
 })
 end
+
 -------------------------------------------------------------------------------
 -- "Goblin Exchange"
 if minetest.settings:get_bool("commoditymarket_enable_goblin_market") then

@@ -5,4 +5,6 @@ commoditymarket_goblin.png - cropped from the "goblins" mod, Copyright 2015 by F
 commoditymarket_empty_shelf.png - from the moreblocks mod's "moreblocks_empty_shelf", under the zlib license by Hugo Locurcio and contributors
 commoditymarket_search.png - Copyright © Diego Martínez (kaeza): CC BY-SA 3.0
 
-commoditymarket_trade.png, commoditymarket_under.png, and commoditymarket_under_top were created by FaceDeer and released under the CC0 public domain license
+commoditymarket_trade.png, commoditymarket_trade_flag.png, commoditymarket_under.png, and commoditymarket_under_top were created by FaceDeer and released under the CC0 public domain license
+
+commoditymarket_sign_post.png and commoditymarket_sign.png are made from elements of default_tree.png and default_aspen_wood.png
