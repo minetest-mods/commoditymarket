@@ -146,7 +146,7 @@ minetest.register_node("commoditymarket:caravan_market", {
 		"default_chest_side.png^commoditymarket_caravan.png","default_chest_side.png^commoditymarket_caravan.png",
 		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_trade.png",},
 	paramtype2 = "facedir",
-	is_ground_content = false,
+	drop = "",
 	groups = {choppy = 2, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1},
 	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
@@ -219,6 +219,7 @@ minetest.register_node("commoditymarket:caravan_post", {
 		"commoditymarket_sign_post.png", "commoditymarket_sign_post.png"},
 	groups = {choppy = 2, oddly_breakable_by_hand = 1,},
 	sounds = default.node_sound_wood_defaults(),
+	inventory_image = "commoditymarket_caravan_sign_inventory.png",
 	paramtype= "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
