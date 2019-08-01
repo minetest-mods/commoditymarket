@@ -142,9 +142,30 @@ commoditymarket.register_market("caravan", caravan_def)
 minetest.register_node("commoditymarket:caravan_market", {
 	description = "Trader's Caravan",
 	_doc_items_longdesc = caravan_def.long_description,
-	tiles = {"default_chest_top.png","default_chest_top.png",
-		"default_chest_side.png^commoditymarket_caravan.png","default_chest_side.png^commoditymarket_caravan.png",
-		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_trade.png",},
+	
+	drawtype = "mesh",
+	mesh = "commoditymarket_wagon.obj",
+	tiles = {
+		{ name = "default_wood.png", backface_culling = true }, -- base wood
+		{ name = "default_fence_rail_wood.png", backface_culling = true }, -- wheel sides
+		{ name = "default_coal_block.png", backface_culling = true }, -- wheel tyre
+		{ name = "commoditymarket_shingles_wood.png", backface_culling = true }, -- roof
+		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
+		{ name = "commoditymarket_trapdoor.png", backface_culling = true }, -- window
+		},
+    collision_box = {
+		type = "fixed",
+        fixed = {
+            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+        },
+    },
+	selection_box = {
+		type = "fixed",
+        fixed = {
+            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+        },
+    },
+
 	paramtype2 = "facedir",
 	drop = "",
 	groups = {choppy = 2, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1},
@@ -177,9 +198,29 @@ minetest.register_node("commoditymarket:caravan_market", {
 minetest.register_node("commoditymarket:caravan_market_permanent", {
 	description = "Trader's Caravan",
 	_doc_items_longdesc = caravan_def.long_description,
-	tiles = {"default_chest_top.png","default_chest_top.png",
-		"default_chest_side.png^commoditymarket_caravan.png","default_chest_side.png^commoditymarket_caravan.png",
-		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_trade.png",},
+	
+	drawtype = "mesh",
+	mesh = "commoditymarket_wagon.obj",
+	tiles = {
+		{ name = "default_wood.png", backface_culling = true }, -- base wood
+		{ name = "default_fence_rail_wood.png", backface_culling = true }, -- wheel sides
+		{ name = "default_coal_block.png", backface_culling = true }, -- wheel tyre
+		{ name = "commoditymarket_shingles_wood.png", backface_culling = true }, -- roof
+		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
+		{ name = "commoditymarket_trapdoor.png", backface_culling = true }, -- window
+		},
+    collision_box = {
+		type = "fixed",
+        fixed = {
+            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+        },
+    },
+	selection_box = {
+		type = "fixed",
+        fixed = {
+            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+        },
+    },
 	paramtype2 = "facedir",
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 1,},
