@@ -11,12 +11,12 @@ local default_items = {"default:axe_bronze","default:axe_diamond","default:axe_m
 if minetest.settings:get_bool("commoditymarket_enable_kings_market") then
 local kings_def = {
 	description = "King's Market",
-	long_description = "The largest and most accessible market for the common man, the King's Market uses gold coins as its medium of exchange (or the equivalent in gold ingots - 1000 coins to the ingot). However, as a respectable institution of the surface world, the King's Market operates only during the hours of daylight. The purchase and sale of swords and explosives is prohibited in the King's Market.",
+	long_description = "The largest and most accessible market for the common man, the King's Market uses gold coins as its medium of exchange (or the equivalent in gold ingots - 1000 coins to the ingot). However, as a respectable institution of the surface world, the King's Market operates only during the hours of daylight. The purchase and sale of swords and explosives is prohibited in the King's Market. Gold coins are represented by a '☼' symbol.",
 	currency = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "\u{263C}", -- Alchemical symbol for gold
+	currency_symbol = "☼", -- "\u{263C}" Alchemical symbol for gold
 	allow_item = function(item)
 		if item:sub(1,13) == "default:sword" or item:sub(1,4) == "tnt:" then
 			return false
@@ -50,12 +50,6 @@ minetest.register_node("commoditymarket:kings_market", {
 			minetest.chat_send_player(clicker:get_player_name(), "At this time of day the King's Market is closed.")
 		end
 	end,
-	can_dig = function(pos, player)
-		if player and minetest.check_player_privs(player, "server") then
-			return true
-		end
-		return false
-	end,
 })
 end
 -------------------------------------------------------------------------------
@@ -64,12 +58,12 @@ end
 if minetest.settings:get_bool("commoditymarket_enable_night_market") then
 local night_def = {
 	description = "Night Market",
-	long_description = "When the sun sets and the stalls of the King's Market close, other vendors are just waking up to share their wares. The Night Market is not as voluminous as the King's Market but accepts a wider range of wares. It accepts the same gold coinage of the realm.",
+	long_description = "When the sun sets and the stalls of the King's Market close, other vendors are just waking up to share their wares. The Night Market is not as voluminous as the King's Market but accepts a wider range of wares. It accepts the same gold coinage of the realm, one thousand coins to the gold ingot.",
 	currency = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "\u{263C}",
+	currency_symbol = "☼", --"\u{263C}"
 	inventory_limit = 10000,
 	--sell_limit =, -- no sell limit for the Night Market
 	initial_items = default_items,
@@ -97,12 +91,6 @@ minetest.register_node("commoditymarket:night_market", {
 			minetest.chat_send_player(clicker:get_player_name(), "At this time of day the Night Market is closed.")
 		end
 	end,
-	can_dig = function(pos, player)
-		if player and minetest.check_player_privs(player, "server") then
-			return true
-		end
-		return false
-	end,
 })
 end
 
@@ -115,12 +103,12 @@ local dwell_time = 600 -- caravan leaves ten minutes after last usage
 
 local caravan_def = {
 	description = "Trader's Caravan",
-	long_description = "Unlike most markets that have well-known fixed locations that travelers congregate to, the network of Trader's Caravans is fluid and dynamic in their locations. A Trader's Caravan can show up anywhere, make modest trades, and then be gone the next time you visit them. These caravans accept gold and gold coins as a currency.",
+	long_description = "Unlike most markets that have well-known fixed locations that travelers congregate to, the network of Trader's Caravans is fluid and dynamic in their locations. A Trader's Caravan can show up anywhere, make modest trades, and then be gone the next time you visit them. These caravans accept gold and gold coins as a currency (one gold ingot to one thousand gold coins exchange rate). Any reasonably-wealthy person can create a signpost marking a location where Trader's Caravans will make a stop.",
 	currency = {
 		["default:gold_ingot"] = 1000,
 		["commoditymarket:gold_coins"] = 1
 	},
-	currency_symbol = "\u{263C}",
+	currency_symbol = "☼", --"\u{263C}"
 	inventory_limit = 1000,
 	sell_limit = 1000,
 	initial_items = default_items,
@@ -342,7 +330,7 @@ local goblin_def = {
 	currency = {
 		["default:coal_lump"] = 100
 	},
-	currency_symbol = "\u{00A2}",
+	currency_symbol = "¢", --"\u{00A2}" cent symbol
 	inventory_limit = 1000,
 	--sell_limit =, -- no sell limit
 }
@@ -362,12 +350,6 @@ minetest.register_node("commoditymarket:goblin_market", {
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		commoditymarket.show_market("goblin", clicker:get_player_name())	
 	end,
-	can_dig = function(pos, player)
-		if player and minetest.check_player_privs(player, "server") then
-			return true
-		end
-		return false
-	end,
 })
 end
 --------------------------------------------------------------------------------
@@ -375,13 +357,13 @@ end
 if minetest.settings:get_bool("commoditymarket_enable_under_market") then
 local undermarket_def = {
 	description = "Undermarket",
-	long_description = "Deep in the bowels of the world, below even the goblin-infested warrens and ancient delvings of the dwarves, dark and mysterious beings once dwelled. A few still linger to this day, and facilitate barter for those brave souls willing to travel in their lost realms. The Undermarket uses Mese chips as a currency - twenty chips to the Mese fragment. Though traders are loathe to physically break Mese crystals up into units that small, as it renders it useless for other purposes.",
+	long_description = "Deep in the bowels of the world, below even the goblin-infested warrens and ancient delvings of the dwarves, dark and mysterious beings once dwelled. A few still linger to this day, and facilitate barter for those brave souls willing to travel in their lost realms. The Undermarket uses Mese chips ('₥') as a currency - twenty chips to the Mese fragment. Though traders are loathe to physically break Mese crystals up into units that small, as it renders it useless for other purposes.",
 	currency = {
 		["default:mese"] = 9*9*20,
 		["default:mese_crystal"] = 9*20,
 		["default:mese_crystal_fragment"] = 20
 	},
-	currency_symbol = "\u{20A5}",
+	currency_symbol = "₥", --"\u{20A5}" mill sign
 	inventory_limit = 10000,
 	--sell_limit =, -- no sell limit
 }
@@ -399,12 +381,6 @@ minetest.register_node("commoditymarket:under_market", {
 	sounds = default.node_sound_stone_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		commoditymarket.show_market("under", clicker:get_player_name())	
-	end,
-	can_dig = function(pos, player)
-		if player and minetest.check_player_privs(player, "server") then
-			return true
-		end
-		return false
 	end,
 })
 end
