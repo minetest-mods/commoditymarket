@@ -163,9 +163,8 @@ minetest.register_node("commoditymarket:caravan_market", {
 		local timer = minetest.get_node_timer(pos)
 		timer:start(dwell_time)
 	end,
-	on_timer = function(pos, elapsed)
-		local node = minetest.get_node(pos)
-		local facedir = node.param2
+	after_destruct = function(pos, oldnode)
+		local facedir = oldnode.param2
 		local dir = minetest.facedir_to_dir(facedir)
 		local target = vector.add(pos, vector.multiply(dir,-3))
 		local target_node = minetest.get_node(target)
@@ -173,6 +172,8 @@ minetest.register_node("commoditymarket:caravan_market", {
 			local meta = minetest.get_meta(target)
 			meta:set_string("infotext", "Right-click to summon another caravan")
 		end
+	end,
+	on_timer = function(pos, elapsed)
 		minetest.set_node(pos, {name="air"})
 		minetest.sound_play("commoditymarket_register_closed", {
 			pos = pos,

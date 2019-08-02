@@ -154,6 +154,12 @@ local sort_marketlist = function(item_list, account)
 		table.sort(item_list, compare_sell_min)
 	elseif sort_by == 9 then
 		table.sort(item_list, compare_last_price)
+	elseif sort_by == 10 then
+		account_context = account
+		table.sort(item_list, function(mkt1, mkt2)
+			-- Define locally so that account is available
+			return (account.inventory[mkt1.item] or 0) > (account.inventory[mkt2.item] or 0)
+		end)
 	end
 end
 
@@ -218,7 +224,8 @@ local get_market_formspec = function(market, account)
 		.."color,span=2;"
 		.."text,align=right,tooltip=Number of items available for sale in the market;"
 		.."text,align=right,tooltip=Minimum price being demanded to sell one of these;"
-		.."text,align=right,tooltip=Price paid for one of these the last time one was sold]"
+		.."text,align=right,tooltip=Price paid for one of these the last time one was sold;"
+		.."text,align=right,tooltip=Quantity of this item that you have in your inventory ready to sell]"
 		.."table[0,0;9.9,5;summary;"
 
 	-- header row
@@ -226,7 +233,7 @@ local get_market_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = ",Item" -- itemname
 	end
-	formspec[#formspec+1] = ",Description,#00FF00,Buy Vol,Buy Max,#FF0000,Sell Vol,Sell Min,Last Price"
+	formspec[#formspec+1] = ",Description,#00FF00,Buy Vol,Buy Max,#FF0000,Sell Vol,Sell Min,Last Price,Inventory"
 
 	local selected_idx
 	local selected_row
@@ -260,6 +267,7 @@ local get_market_formspec = function(market, account)
 		formspec[#formspec+1] = "," .. row.sell_volume
 		formspec[#formspec+1] = "," .. ((row.sell_orders[#row.sell_orders] or {}).price or "-")
 		formspec[#formspec+1] = "," .. (row.last_price or "-")
+		formspec[#formspec+1] = "," .. (account.inventory[row.item] or "-")
 		
 		-- we happen to be processing the row that matches the item this player has selected. Record that.
 		if selected == row.item then
