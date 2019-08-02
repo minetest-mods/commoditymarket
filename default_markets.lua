@@ -146,23 +146,23 @@ minetest.register_node("commoditymarket:caravan_market", {
 	drawtype = "mesh",
 	mesh = "commoditymarket_wagon.obj",
 	tiles = {
+		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
 		{ name = "default_wood.png", backface_culling = true }, -- base wood
 		{ name = "default_fence_rail_wood.png", backface_culling = true }, -- wheel sides
 		{ name = "default_coal_block.png", backface_culling = true }, -- wheel tyre
 		{ name = "commoditymarket_shingles_wood.png", backface_culling = true }, -- roof
-		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
-		{ name = "commoditymarket_trapdoor.png", backface_culling = true }, -- window
+		{ name = "default_junglewood.png", backface_culling = true }, -- corner wood
 		},
     collision_box = {
 		type = "fixed",
         fixed = {
-            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+            {-0.75, -0.5, -1.25, 0.75, 1.5, 1.25},
         },
     },
 	selection_box = {
 		type = "fixed",
         fixed = {
-            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+            {-0.75, -0.5, -1.25, 0.75, 1.5, 1.25},
         },
     },
 
@@ -179,7 +179,7 @@ minetest.register_node("commoditymarket:caravan_market", {
 		local node = minetest.get_node(pos)
 		local facedir = node.param2
 		local dir = minetest.facedir_to_dir(facedir)
-		local target = vector.add(pos, vector.multiply(dir,-2))
+		local target = vector.add(pos, vector.multiply(dir,-3))
 		local target_node = minetest.get_node(target)
 		if target_node.name == "commoditymarket:caravan_post" then
 			local meta = minetest.get_meta(target)
@@ -202,25 +202,26 @@ minetest.register_node("commoditymarket:caravan_market_permanent", {
 	drawtype = "mesh",
 	mesh = "commoditymarket_wagon.obj",
 	tiles = {
+		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
 		{ name = "default_wood.png", backface_culling = true }, -- base wood
 		{ name = "default_fence_rail_wood.png", backface_culling = true }, -- wheel sides
 		{ name = "default_coal_block.png", backface_culling = true }, -- wheel tyre
 		{ name = "commoditymarket_shingles_wood.png", backface_culling = true }, -- roof
-		{ name = "commoditymarket_door_wood.png", backface_culling = true }, -- door
-		{ name = "commoditymarket_trapdoor.png", backface_culling = true }, -- window
+		{ name = "default_junglewood.png", backface_culling = true }, -- corner wood
 		},
     collision_box = {
 		type = "fixed",
         fixed = {
-            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+            {-0.75, -0.5, -1.25, 0.75, 1.5, 1.25},
         },
     },
 	selection_box = {
 		type = "fixed",
         fixed = {
-            {-0.6, -0.5, -1.25, 0.6, 1.5, 1.25},
+            {-0.75, -0.5, -1.25, 0.75, 1.5, 1.25},
         },
     },
+
 	paramtype2 = "facedir",
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 1,},
@@ -230,11 +231,11 @@ minetest.register_node("commoditymarket:caravan_market_permanent", {
 	end,
 })
 
--- is a 3x3 area centered around pos clear of obstruction and has usable ground?
+-- is a 5x5 area centered around pos clear of obstruction and has usable ground?
 local is_suitable_caravan_space = function(pos)
 	-- walkable ground?
-	for x = pos.x - 1, pos.x + 1, 1 do
-		for z = pos.z - 1, pos.z + 1, 1 do
+	for x = pos.x - 2, pos.x + 2, 1 do
+		for z = pos.z - 2, pos.z + 2, 1 do
 			local node = minetest.get_node({x=x, y=pos.y-1, z=z})
 			local node_def = minetest.registered_nodes[node.name]
 			if node_def == nil or node_def.walkable ~= true then return false end
@@ -242,7 +243,7 @@ local is_suitable_caravan_space = function(pos)
 	end
 	-- air in the rest?
 	for y = pos.y, pos.y+2, 1 do
-		for x = pos.x - 1, pos.x + 1, 1 do
+		for x = pos.x - 2, pos.x + 2, 1 do
 			for z = pos.z - 1, pos.z + 1, 1 do
 				local node = minetest.get_node({x=x, y=y, z=z})
 				if node.name ~= "air" then return false end
@@ -287,7 +288,7 @@ minetest.register_node("commoditymarket:caravan_post", {
 		end
 		local facedir = node.param2
 		local dir = minetest.facedir_to_dir(facedir)
-		local target = vector.add(pos, vector.multiply(dir,2))
+		local target = vector.add(pos, vector.multiply(dir,3))
 
 		local target_node = minetest.get_node(target)
 		if target_node.name == "commoditymarket:caravan_market" then
@@ -300,7 +301,7 @@ minetest.register_node("commoditymarket:caravan_post", {
 		local is_suitable_space = is_suitable_caravan_space(target)
 			
 		if not is_suitable_space then
-			meta:set_string("infotext", "Indicated parking area isn't suitable.\nA 3x3 open space with solid ground\nis required for a caravan.")
+			meta:set_string("infotext", "Indicated parking area isn't suitable.\nA 5x5 open space with solid ground\nis required for a caravan.")
 			meta:set_float("wait_time", 0)
 			local timer = minetest.get_node_timer(pos)
 			timer:start(1.0)
@@ -351,9 +352,9 @@ commoditymarket.register_market("goblin", goblin_def)
 minetest.register_node("commoditymarket:goblin_market", {
 	description = goblin_def.description,
 	_doc_items_longdesc = goblin_def.long_description,
-	tiles = {"default_chest_top.png","default_chest_top.png",
-		"default_chest_side.png","default_chest_side.png",
-		"commoditymarket_empty_shelf.png","default_chest_side.png^commoditymarket_goblin.png",},
+	tiles = {"default_chest_top.png^(default_coal_block.png^[opacity:128)","default_chest_top.png^(default_coal_block.png^[opacity:128)",
+		"default_chest_side.png^(default_coal_block.png^[opacity:128)","default_chest_side.png^(default_coal_block.png^[opacity:128)",
+		"commoditymarket_empty_shelf.png^(default_coal_block.png^[opacity:128)","default_chest_side.png^(default_coal_block.png^[opacity:128)^commoditymarket_goblin.png",},
 	paramtype2 = "facedir",
 	is_ground_content = false,
 	groups = {choppy = 2, oddly_breakable_by_hand = 1,},

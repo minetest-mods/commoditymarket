@@ -9,5 +9,4 @@ commoditymarket_shingles_wood.png is cottages_homedecor_shingles_wood.png from t
 commoditymarket_trade.png, commoditymarket_trade_flag.png, commoditymarket_under.png, and commoditymarket_under_top were created by FaceDeer and released under the CC0 public domain license
 
 commoditymarket_sign_post.png and commoditymarket_sign.png are made from elements of default_tree.png and default_aspen_wood.png
-commoditymarket_trapdoor.png is doors_trapdoor.png from the doors mod
 commoditymarket_door_wood.png is doors_door_wood.png from the doors mod
