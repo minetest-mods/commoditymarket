@@ -67,6 +67,7 @@ local night_def = {
 	inventory_limit = 10000,
 	--sell_limit =, -- no sell limit for the Night Market
 	initial_items = default_items,
+	anonymous = true,
 }
 
 gold_coins_required = true

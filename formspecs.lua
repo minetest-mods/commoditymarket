@@ -29,8 +29,6 @@ local get_item_description = function(item)
 	return "Unknown Item"
 end
 
-
-
 -- Inventory formspec
 -------------------------------------------------------------------------------------
 
@@ -39,6 +37,7 @@ local inventory_desc_comp = function(invitem1, invitem2) return invitem1.descrip
 
 local get_account_formspec = function(market, account)
 	local show_itemnames = account.show_itemnames == "true"
+	local market_def = market.def
 
 	local inventory = {}
 	local inventory_count = 0
@@ -54,8 +53,8 @@ local get_account_formspec = function(market, account)
 	end
 
 	local formspec = {
-		"size[10,10]",
-		"tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;2;false;true]"
+		"size[10,10]"
+		.."tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;2;false;true]"
 	}
 	formspec[#formspec+1] = "tablecolumns[image"
 	for i=1, #inventory, 2 do
@@ -72,9 +71,8 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = ";text"
 	end
 	formspec[#formspec+1] = ";text;text,align=center]"
-	formspec[#formspec+1] = "tooltip[inventory;All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.]"
-	formspec[#formspec+1] = "table[0,0;9.9,4;inventory;"
-	formspec[#formspec+1] = "0"
+		.."tooltip[inventory;All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.]"
+		.."table[0,0;9.9,4;inventory;0"
 	if show_itemnames then
 		formspec[#formspec+1] = ",Item"
 	end	
@@ -96,19 +94,18 @@ local get_account_formspec = function(market, account)
 		.."label[1,0;Drop items here to\nadd to your account]"
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
 		
-	if market.def.inventory_limit then
-		formspec[#formspec+1] = "label[3,0;Inventory limit:\n" .. inventory_count.."/" .. market.def.inventory_limit .. "]"
+	if market_def.inventory_limit then
+		formspec[#formspec+1] = "label[3,0;Inventory limit:\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
 			.. "tooltip[3,0;1.5,1;You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.]"
 	end
-	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market.def.currency_symbol .. account.balance .. "]"
+	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market_def.currency_symbol .. account.balance .. "]"
 		.."field[6.1,0.25;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
 		.."button[6.7,0;1.2,1;withdraw;Withdraw]"
 		.."tooltip[4.9,0;3.5,1;Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.]"
 		.."container_end[]"
-	
-	formspec[#formspec+1] = "container[1.1,5.75]list[current_player;main;0,0;8,1;]"..
-			"list[current_player;main;0,1.25;8,3;8]container_end[]"
+		.."container[1.1,5.75]list[current_player;main;0,0;8,1;]"
+		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
 
 	return table.concat(formspec)
 end
@@ -196,20 +193,27 @@ local make_marketlist = function(market, account)
 	return market_list
 end
 
+local get_account_name = function(target_account, this_account, anonymous)
+	if anonymous and target_account ~= this_account then
+		return ""
+	end
+	return target_account.name
+end
+
 local get_market_formspec = function(market, account)
 	local market_def = market.def
 	local selected = account.selected
 	local market_list = make_marketlist(market, account)
 	local show_itemnames = account.show_itemnames == "true"
+	local anonymous = market_def.anonymous
 
 	local formspec = {
-		"size[10,10]",
-		"tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;3;false;true]",
-		"tablecolumns["
+		"size[10,10]"
+		.."tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;3;false;true]"
+		.."tablecolumns[image" -- icon
 	}
 	
 	-- column definitions
-	formspec[#formspec+1] = "image" -- icon
 	for i, row in ipairs(market_list) do
 		formspec[#formspec+1] = "," .. i .. "=" .. get_icon(row.item)
 	end
@@ -227,9 +231,9 @@ local get_market_formspec = function(market, account)
 		.."text,align=right,tooltip=Price paid for one of these the last time one was sold;"
 		.."text,align=right,tooltip=Quantity of this item that you have in your inventory ready to sell]"
 		.."table[0,0;9.9,5;summary;"
+		.."0"-- icon
 
 	-- header row
-	formspec[#formspec+1] = "0"-- icon
 	if show_itemnames then
 		formspec[#formspec+1] = ",Item" -- itemname
 	end
@@ -260,14 +264,14 @@ local get_market_formspec = function(market, account)
 			desc_display = desc_display:sub(1,truncate_length-2).."..."
 		end
 		formspec[#formspec+1] = "," .. desc_display
-		formspec[#formspec+1] = ",#00FF00"
-		formspec[#formspec+1] = "," .. row.buy_volume
-		formspec[#formspec+1] = "," .. ((row.buy_orders[#row.buy_orders] or {}).price or "-")
-		formspec[#formspec+1] = ",#FF0000"
-		formspec[#formspec+1] = "," .. row.sell_volume
-		formspec[#formspec+1] = "," .. ((row.sell_orders[#row.sell_orders] or {}).price or "-")
-		formspec[#formspec+1] = "," .. (row.last_price or "-")
-		formspec[#formspec+1] = "," .. (account.inventory[row.item] or "-")
+		.. ",#00FF00,"
+		.. row.buy_volume
+		.. "," .. ((row.buy_orders[#row.buy_orders] or {}).price or "-")
+		.. ",#FF0000,"
+		.. row.sell_volume
+		.. "," .. ((row.sell_orders[#row.sell_orders] or {}).price or "-")
+		.. "," .. (row.last_price or "-")
+		.. "," .. (account.inventory[row.item] or "-")
 		
 		-- we happen to be processing the row that matches the item this player has selected. Record that.
 		if selected == row.item then
@@ -307,9 +311,8 @@ local get_market_formspec = function(market, account)
 		-- player inventory for this item and for currency
 		formspec[#formspec+1] = "label[0.1,5.1;"..desc_display.."\nIn inventory: "
 			.. tostring(account.inventory[selected] or 0) .."\nBalance: "..market_def.currency_symbol..account.balance .."]"
-		
 		-- buy/sell controls
-		formspec[#formspec+1] = "container[6,5]"
+			.. "container[6,5]"
 		local sell_limit = market_def.sell_limit
 		if sell_limit then
 			local total_sell = 0
@@ -325,23 +328,28 @@ local get_market_formspec = function(market, account)
 				..sell_limit-total_sell.." items remaining. Cancel old sell orders to free up space.]"
 		end
 		formspec[#formspec+1] = "button[0,0.5;1,1;buy;Buy]field[1.3,0.85;1,1;quantity;Quantity;]"
-			.."field[2.3,0.85;1,1;price;Price;]button[3,0.5;1,1;sell;Sell]"
+			.."field[2.3,0.85;1,1;price;Price per;]button[3,0.5;1,1;sell;Sell]"
 			.."field_close_on_enter[quantity;false]field_close_on_enter[price;false]"
 			.."tooltip[0,0.25;3.75,1;Use these fields to enter buy and sell orders for the selected item]"
-		formspec[#formspec+1] = "container_end[]"
-
+			.."container_end[]"
 		-- table of buy and sell orders
-		formspec[#formspec+1] = "tablecolumns[color;text;"
+			.."tablecolumns[color;text;"
 			.."text,align=right,tooltip=The price per item in this order;"
 			.."text,align=right,tooltip=The total amount of items in this particular order;"
 			.."text,align=right,tooltip=The total amount of items available at this price accounting for the other orders also currently being offered;"
 			.."text,tooltip=The name of the player who placed this order;"
 			.."text,align=right,tooltip=How many days ago this order was placed]"
-		formspec[#formspec+1] = "table[0,6.5;9.9,3.5;orders;#FFFFFF,Order,Price,Quantity,Total Volume,Player,Days Old"
+		
+			.."table[0,6.5;9.9,3.5;orders;#FFFFFF,Order,Price,Quantity,Total Volume,Player,Days Old"
+
 		local sell_volume = selected_row.sell_volume
 		for i, sell in ipairs(selected_row.sell_orders) do
-			formspec[#formspec+1] = ",#FF0000,Sell,"..sell.price..","..sell.quantity..","..sell_volume
-				..","..sell.account.name..","..math.floor((current_time-sell.timestamp)/86400)
+			formspec[#formspec+1] = ",#FF0000,Sell,"
+				..sell.price..","
+				..sell.quantity..","
+				..sell_volume..","
+				..get_account_name(sell.account, account, anonymous)..","
+				..math.floor((current_time-sell.timestamp)/86400)
 			sell_volume = sell_volume - sell.quantity
 		end
 		local buy_volume = 0
@@ -351,8 +359,12 @@ local get_market_formspec = function(market, account)
 		for i = buy_count, 1, -1  do
 			buy = buy_orders[i]
 			buy_volume = buy_volume + buy.quantity
-			formspec[#formspec+1] = ",#00FF00,Buy,"..buy.price..","..buy.quantity..","..buy_volume
-				..","..buy.account.name..","..math.floor((current_time-buy.timestamp)/86400)
+			formspec[#formspec+1] = ",#00FF00,Buy,"
+				..buy.price..","
+				..buy.quantity..","
+				..buy_volume..","
+				..get_account_name(buy.account, account, anonymous)..","
+				..math.floor((current_time-buy.timestamp)/86400)
 		end
 		formspec[#formspec+1] = "]"
 	else
@@ -365,37 +377,48 @@ end
 -- Information formspec
 
 --{item=item, quantity=quantity, price=price, purchaser=purchaser, seller=seller, timestamp = minetest.get_gametime()}
-local log_to_string = function(market, log_entry)
+local log_to_string = function(market, log_entry, account)
+	local anonymous = market.def.anonymous
+	local purchaser = log_entry.purchaser
+	local seller = log_entry.seller
 	local purchaser_name
-	if log_entry.purchaser == log_entry.seller then
+	if purchaser == seller then
 		purchaser_name = "themself"
+	elseif anonymous and purchaser ~= account then
+		purchaser_name = "someone"
 	else
-		purchaser_name = log_entry.purchaser.name
+		purchaser_name = purchaser.name
 	end
-	return "On day " .. math.ceil(log_entry.timestamp/86400) .. " " .. log_entry.seller.name .. " sold " .. log_entry.quantity .. " "
-		.. log_entry.item .. " to " .. purchaser_name .. " at " .. market.def.currency_symbol .. log_entry.price
+	local seller_name
+	if anonymous and seller ~= account then
+		seller_name = "someone"
+	else
+		seller_name = seller.name
+	end
+
+	return "On day " .. math.ceil(log_entry.timestamp/86400) .. " " .. seller_name .. " sold " .. log_entry.quantity .. " "
+		.. log_entry.item .. " to " .. purchaser_name .. " at " .. market.def.currency_symbol .. log_entry.price .. " each."
 end
 
 
 local get_info_formspec = function(market, account)
 	local formspec = {
-		"size[10,10]",
-		"tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;1;false;true]",
-		"textarea[0.5,0.5;9.5,1.5;;Description:;"..market.def.long_description.."]",
-		"textarea[0.5,2.5;9.5,6;;Your Recent Purchases and Sales:;",
+		"size[10,10]"
+		.."tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;1;false;true]"
+		.."textarea[0.5,0.5;9.5,1.5;;Description:;"..market.def.long_description.."]"
+		.."textarea[0.5,2.5;9.5,6;;Your Recent Purchases and Sales:;"
 	}
 	if next(account.log) then
 		for _, log_entry in ipairs(account.log) do
-			formspec[#formspec+1] = log_to_string(market, log_entry) .. "\n"
+			formspec[#formspec+1] = log_to_string(market, log_entry, account) .. "\n"
 		end
 	else
 		formspec[#formspec+1] = "No logged activites in this market yet"
 	end
-	formspec[#formspec+1] = "]"
 	
 	local show_itemnames = account.show_itemnames or "false"
 
-	formspec[#formspec+1] = "container[0.5, 7.5]label[0,0;Settings:]checkbox[0,0.25;show_itemnames;Show Itemnames;"
+	formspec[#formspec+1] = "]container[0.5, 7.5]label[0,0;Settings:]checkbox[0,0.25;show_itemnames;Show Itemnames;"
 		..show_itemnames.."]container_end[]"
 	
 	return table.concat(formspec)
