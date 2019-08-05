@@ -419,7 +419,7 @@ end
 commoditymarket.register_market = function(market_name, market_def)
 	assert(not commoditymarket.registered_markets[market_name])
 	
-	market_def.currency_symbol = market_def.currency_symbol or "\u{00A4}" -- defaults to the generic currency symbol ("scarab")
+	market_def.currency_symbol = market_def.currency_symbol or "¤" -- \u{00A4} -- defaults to the generic currency symbol ("scarab")
 	market_def.description = market_def.description or "Market"
 	market_def.long_description = market_def.long_description or "A market where orders to buy or sell items can be placed and fulfilled."
 	

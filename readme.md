@@ -67,4 +67,27 @@ The file "default_markets.lua" contains a number of pre-defined markets that pro
 * Goblin Exchange - a strange marketplace that uses coal as a currency
 * Undermarket - where dark powers make their trades, using Mese as a currency
 
-All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators, they have on_dig methods that prevent them from being removed and don't have crafting recipes. Modifying these markets or creating your own from scratch should hopefully be a fairly straightforward task, however.
+All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators, they don't have crafting recipes. Modifying these markets or creating your own from scratch should hopefully be a fairly straightforward task.
+
+### Market definition API
+
+```
+local market_def = {
+	description = "Night Market", -- A short name for this market, appears as the text of the "info" tab of the market's UI
+	long_description = "When the sun sets and the stalls of the King's Market close, other vendors are just waking up to share their wares. The Night Market is not as voluminous as the King's Market but accepts a wider range of wares. It accepts the same gold coinage of the realm, one thousand coins to the gold ingot.", -- A longer description with flavor text and other information to present to the user, shown in the info tab. Optional.
+	currency = {
+		["default:gold_ingot"] = 1000,
+		["commoditymarket:gold_coins"] = 1
+	}, -- List all items that get translated into "currency" here, along with their conversion rates. Take care to ensure there's no way for a player to multiply their money when crafting currency items into each other (eg, if there was some way to get more than 1000 coin items out of a gold ingot, in this case)
+	currency_symbol = "☼", -- Used in various places in the UI. If not defined, defaults to "¤" (the generic currency symbol)
+	inventory_limit = 10000, -- Optional, when set this prevents the player from adding items to their market inventory when it's over this limit
+	sell_limit = 10000, -- Optional, when set this prevents sell orders from being added if the player already has this many items for sale
+	initial_items = {"default:cobble", "default:wood"}, -- Optional, a list of items that the market will be initialized with on startup. Players can add other items during play.
+	allow_item = function(item) return true end, -- Optional, this function is used to determine whether the market permits a player to add a particular item to its inventory.
+	anonymous = true, -- If set to true then the player won't be able to see the names associated with other player's orders, only their own.
+}
+
+commoditymarket.register_market("market_name", market_def)
+```
+
+Once a market is defined, use `commoditymarket.show_market(market_name, player_name)` to show the market interface to a player.

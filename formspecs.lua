@@ -258,8 +258,8 @@ local get_market_formspec = function(market, account)
 			formspec[#formspec+1] = "," .. item_display
 		end
 		
-		local def = minetest.registered_items[row.item] or {}
-		local desc_display = def.description:gsub("\n", " ") or "Unknown Item"
+		local def = minetest.registered_items[row.item] or {description = "Unknown Item"}
+		local desc_display = def.description:gsub("\n", " ")
 		if desc_display:len() > truncate_length then
 			desc_display = desc_display:sub(1,truncate_length-2).."..."
 		end
@@ -304,8 +304,8 @@ local get_market_formspec = function(market, account)
 		if show_itemnames then
 			desc_display = selected
 		else
-			local def = minetest.registered_items[selected_row.item] or {}
-			desc_display = def.description:gsub("\n", " ") or "Unknown Item"
+			local def = minetest.registered_items[selected_row.item] or {description="Unknown Item"}
+			desc_display = def.description:gsub("\n", " ")
 		end
 
 		-- player inventory for this item and for currency
@@ -370,6 +370,7 @@ local get_market_formspec = function(market, account)
 	else
 		formspec[#formspec+1] = "label[0.1,5.1;Select an item to view or place orders]"
 	end
+	minetest.debug(table.concat(formspec))
 	return table.concat(formspec)
 end
 
