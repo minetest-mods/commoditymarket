@@ -125,7 +125,7 @@ end
 ------------------------------------------------------------------------------------------
 
 local add_inventory_to_account = function(market, account, item, quantity)
-	if quantity < 1 or minetest.registered_items[item] == nil then
+	if quantity < 1 then
 		return false
 	end
 	
@@ -364,6 +364,26 @@ minetest.register_chatcommand("market.removeitem", {
 			return
 		end
 		remove_market_item(market, params[2])
+	end,
+})
+
+minetest.register_chatcommand("market.purge_unknowns", {
+	params = "",
+	privs = {server=true},
+	decription = "removes all unknown items from all markets. All existing buys and sells for those items will be cancelled.",
+	func = function(name, param)
+		for market_name, market in pairs(commoditymarket.registered_markets) do
+			local items_to_remove = {}
+			local items_to_move = {}
+			for item, orders in pairs(market.orders_for_items) do
+				if minetest.registered_items[item] == nil then
+					table.insert(items_to_remove, item)
+				end
+			end
+			for _, item in ipairs(items_to_remove) do
+				remove_market_item(market, item)
+			end
+		end
 	end,
 })
 
