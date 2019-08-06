@@ -221,11 +221,20 @@ minetest.register_node("commoditymarket:caravan_market_permanent", {
 	end,
 })
 
--- is a 5x5 area centered around pos clear of obstruction and has usable ground?
-local is_suitable_caravan_space = function(pos)
+-- is a 5x3 area centered around pos clear of obstruction and has usable ground?
+local is_suitable_caravan_space = function(pos, facedir)
+	local x_dim = 2
+	local z_dim = 2
+	local dir = minetest.facedir_to_dir(facedir)
+	if dir.x ~= 0 then
+		z_dim = 1
+	elseif dir.z ~= 0 then
+		x_dim = 1
+	end	
+	
 	-- walkable ground?
-	for x = pos.x - 2, pos.x + 2, 1 do
-		for z = pos.z - 2, pos.z + 2, 1 do
+	for x = pos.x - x_dim, pos.x + x_dim, 1 do
+		for z = pos.z - z_dim, pos.z + z_dim, 1 do
 			local node = minetest.get_node({x=x, y=pos.y-1, z=z})
 			local node_def = minetest.registered_nodes[node.name]
 			if node_def == nil or node_def.walkable ~= true then return false end
@@ -233,8 +242,8 @@ local is_suitable_caravan_space = function(pos)
 	end
 	-- air in the rest?
 	for y = pos.y, pos.y+2, 1 do
-		for x = pos.x - 2, pos.x + 2, 1 do
-			for z = pos.z - 1, pos.z + 1, 1 do
+		for x = pos.x - x_dim, pos.x + x_dim, 1 do
+			for z = pos.z - z_dim, pos.z + z_dim, 1 do
 				local node = minetest.get_node({x=x, y=y, z=z})
 				if node.name ~= "air" then return false end
 			end
@@ -288,10 +297,10 @@ minetest.register_node("commoditymarket:caravan_post", {
 			return
 		end
 		
-		local is_suitable_space = is_suitable_caravan_space(target)
+		local is_suitable_space = is_suitable_caravan_space(target, facedir)
 			
 		if not is_suitable_space then
-			meta:set_string("infotext", "Indicated parking area isn't suitable.\nA 5x5 open space with solid ground\nis required for a caravan.")
+			meta:set_string("infotext", "Indicated parking area isn't suitable.\nA 5x3 open space with solid ground\nis required for a caravan.")
 			meta:set_float("wait_time", 0)
 			local timer = minetest.get_node_timer(pos)
 			timer:start(1.0)
