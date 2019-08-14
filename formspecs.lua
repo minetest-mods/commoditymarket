@@ -390,21 +390,36 @@ local log_to_string = function(market, log_entry, account)
 	local seller = log_entry.seller
 	local purchaser_name
 	if purchaser == seller then
-		purchaser_name = "themself"
+		purchaser_name = "yourself"
 	elseif anonymous and purchaser ~= account then
 		purchaser_name = "someone"
+	elseif purchaser == account then
+		purchaser_name = "you"
 	else
 		purchaser_name = purchaser.name
 	end
 	local seller_name
 	if anonymous and seller ~= account then
 		seller_name = "someone"
+	elseif seller == account then
+		seller_name = "you"
 	else
 		seller_name = seller.name
 	end
+	
+	local colour
+	local new
+	local last_acknowledged = account.last_acknowledged or 0
+	if log_entry.timestamp > last_acknowledged then
+		colour = "#FFFF00"
+		new = true
+	else
+		colour = "#FFFFFF"
+		new = false
+	end
 
-	return "On day " .. math.ceil(log_entry.timestamp/86400) .. " " .. seller_name .. " sold " .. log_entry.quantity .. " "
-		.. log_entry.item .. " to " .. purchaser_name .. " at " .. market.def.currency_symbol .. log_entry.price .. " each."
+	return colour .. "On day " .. math.ceil(log_entry.timestamp/86400) .. " " .. seller_name .. " sold " .. log_entry.quantity .. " "
+		.. log_entry.item .. " to " .. purchaser_name .. " at " .. market.def.currency_symbol .. log_entry.price .. " each.", new
 end
 
 
@@ -413,14 +428,24 @@ local get_info_formspec = function(market, account)
 		"size[10,10]"
 		.."tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;1;false;true]"
 		.."textarea[0.5,0.5;9.5,1.5;;Description:;"..market.def.long_description.."]"
-		.."textarea[0.5,2.5;9.5,6;;Your Recent Purchases and Sales:;"
+		.."label[0.5,2.2;Your Recent Purchases and Sales:]"
+		.."textlist[0.5,2.6;8.5,4;log_entries;"
 	}
 	if next(account.log) then
+		local new = false
 		for _, log_entry in ipairs(account.log) do
-			formspec[#formspec+1] = log_to_string(market, log_entry, account) .. "\n"
+			local log_string, new_log = log_to_string(market, log_entry, account)
+			new = new or new_log
+			formspec[#formspec+1] = log_string
+			formspec[#formspec+1] = ","
+		end
+		formspec[#formspec] = "]" -- Note: there's no +1 here deliberately, that way the "]" overwrites the last comma added by the loop above.
+		if new then
+			formspec[#formspec+1] = "button[7.1,6.9;2,0.5;acknowledge_log;Mark logs as read]" ..
+			"tooltip[acknowledge_log;Log entries in yellow are new since last time you marked your log as read]"
 		end
 	else
-		formspec[#formspec+1] = "No logged activites in this market yet"
+		formspec[#formspec+1] = "#CCCCCCNo logged activites in this market yet]"
 	end
 	
 	local show_itemnames = account.show_itemnames or "false"
@@ -627,7 +652,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if process_checkbox("filter_participating", fields, account) then something_changed = true end
 	if process_checkbox("show_itemnames", fields, account) then something_changed = true end
-				
+	
+	if fields.acknowledge_log then
+		account.last_acknowledged = minetest.get_gametime()
+		something_changed = true
+	end
+	
 	if fields.apply_search or fields.key_enter_field == "search_filter" then
 		something_changed = true
 	end
