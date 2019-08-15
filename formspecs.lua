@@ -1,10 +1,11 @@
 local get_icon = function(item)
 	local def = minetest.registered_items[item]
 	local returnstring = "unknown_item.png"
+
 	if def then
 		local inventory_image = def.inventory_image
 		if inventory_image and inventory_image ~= "" then
-			return inventory_image
+			returnstring = inventory_image
 		else
 			local tiles = def.tiles
 			local tilecount = #tiles
@@ -18,13 +19,15 @@ local get_icon = function(item)
 					returnstring = tile_name
 				end
 			end
-			-- Formspec tables apparently can't handle image compositing and modifiers
-			local found_caret = returnstring:find("%^")
-			if found_caret then
-				returnstring = returnstring:sub(1, found_caret-1)
-			end
 		end
 	end
+	
+	-- Formspec tables can't handle image compositing and modifiers
+	local found_caret = returnstring:find("%^")
+	if found_caret then
+		returnstring = returnstring:sub(1, found_caret-1)
+	end
+
 	return returnstring
 end
 
@@ -113,7 +116,6 @@ local get_account_formspec = function(market, account)
 		.."container_end[]"
 		.."container[1.1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
-
 	return table.concat(formspec)
 end
 
