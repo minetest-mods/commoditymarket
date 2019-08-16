@@ -1,3 +1,7 @@
+-- internationalization boilerplate
+local MP = minetest.get_modpath(minetest.get_current_modname())
+local S, NS = dofile(MP.."/intllib.lua")
+
 commoditymarket.registered_markets = {}
 local log_length_limit = 30
 
@@ -188,7 +192,17 @@ local add_sell = function(market, account, item, price, quantity)
 	end
 	
 	-- validate that this sell order is possible
-	if sell_limit_exceeded or price < 0 or not remove_inventory_from_account(account, item, quantity) then
+	if sell_limit_exceeded or price < 0 or quantity < 1 or not remove_inventory_from_account(account, item, quantity) then
+		minetest.sound_play({name = "commoditymarket_error", gain = 0.1, to_player=account.name})
+		if sell_limit_exceeded then
+			minetest.chat_send_player(account.name, S("You have too many items listed for sale in this market, please cancel some sell orders to make room for new ones."))
+		elseif price < 0 then
+			minetest.chat_send_player(account.name, S("You can't sell items for a negative price."))
+		elseif quantity < 1 then
+			minetest.chat_send_player(account.name, S("You can't sell fewer than one item."))			
+		else
+			minetest.chat_send_player(account.name, S("You don't have enough of that item in your inventory to post this sell order."))
+		end
 		return false
 	end
 
@@ -230,6 +244,9 @@ local add_sell = function(market, account, item, price, quantity)
 		table.bininsert(sell_market, order, sell_comp)
 		market.orders_for_items[item].sell_volume = market.orders_for_items[item].sell_volume + quantity
 	end
+
+	minetest.sound_play({name = "commoditymarket_register_opened", gain = 0.1, to_player=account.name})
+	return true
 end
 
 local cancel_sell = function(market, item, order)
@@ -241,13 +258,13 @@ local cancel_sell = function(market, item, order)
 	remove_order(order, sell_market)
 	market.orders_for_items[item].sell_volume = market.orders_for_items[item].sell_volume - quantity
 	add_inventory_to_account(market, account, item, quantity)
+	
+	minetest.sound_play({name = "commoditymarket_register_closed", gain = 0.1, to_player=account.name})
 end
 
 -----------------------------------------------------------------------------------------------------------
 
 local test_buy = function(market, balance, item, price, quantity)
-	if price < 0 or quantity < 1 then return false end
-	
 	local sell_market = market.orders_for_items[item].sell_orders
 	local test_quantity = quantity
 	local test_balance = balance
@@ -272,7 +289,17 @@ end
 local add_buy = function(market, account, item, price, quantity)
 	price = tonumber(price)
 	quantity = tonumber(quantity)
-	if not test_buy(market, account.balance, item, price, quantity) then return false end
+	if price < 0 or quantity < 1 or not test_buy(market, account.balance, item, price, quantity) then
+		minetest.sound_play({name = "commoditymarket_error", gain = 0.1, to_player=account.name})
+		if price < 0 then
+			minetest.chat_send_player(account.name, S("You can't pay less than nothing for an item."))
+		elseif quantity < 1 then
+			minetest.chat_send_player(account.name, S("You have to buy at least one item."))
+		else
+			minetest.chat_send_player(account.name, S("You can't afford that many of this item."))
+		end
+		return false
+	end
 
 	local sell_market = market.orders_for_items[item].sell_orders
 	local sell_order = sell_market[#sell_market]
@@ -317,6 +344,7 @@ local add_buy = function(market, account, item, price, quantity)
 		market.orders_for_items[item].buy_volume = market.orders_for_items[item].buy_volume + quantity
 	end
 	
+	minetest.sound_play({name = "commoditymarket_register_opened", gain = 0.1, to_player=account.name})
 	return true
 end
 
@@ -331,6 +359,8 @@ local cancel_buy = function(market, item, order)
 	remove_order(order, buy_market)
 	
 	account.balance = account.balance + price*quantity
+	
+	minetest.sound_play({name = "commoditymarket_register_closed", gain = 0.1, to_player=account.name})
 end
 
 -----------------------------------------------------------------------------------------------------------

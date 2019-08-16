@@ -56,6 +56,7 @@ minetest.register_node("commoditymarket:kings_market", {
 			commoditymarket.show_market("kings", clicker:get_player_name())
 		else
 			minetest.chat_send_player(clicker:get_player_name(), S("At this time of day the King's Market is closed."))
+			minetest.sound_play({name = "commoditymarket_error", gain = 0.1, to_player=clicker:get_player_name()})
 		end
 	end,
 })
@@ -99,6 +100,7 @@ minetest.register_node("commoditymarket:night_market", {
 			commoditymarket.show_market("night", clicker:get_player_name())
 		else
 			minetest.chat_send_player(clicker:get_player_name(), S("At this time of day the Night Market is closed."))
+			minetest.sound_play({name = "commoditymarket_error", gain = 0.1, to_player=clicker:get_player_name()})
 		end
 	end,
 })

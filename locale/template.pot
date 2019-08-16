@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-16 00:40-0600\n"
+"POT-Creation-Date: 2019-08-16 02:20-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,19 +39,19 @@ msgstr ""
 msgid "At this time of day the King's Market is closed."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:68
+#: commoditymarket\default_markets.lua:69
 msgid "Night Market"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:101
+#: commoditymarket\default_markets.lua:102
 msgid "At this time of day the Night Market is closed."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:115
+#: commoditymarket\default_markets.lua:117
 msgid "Trader's Caravan"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:116
+#: commoditymarket\default_markets.lua:118
 msgid ""
 "Unlike most markets that have well-known fixed locations that travelers "
 "congregate to, the network of Trader's Caravans is fluid and dynamic in "
@@ -62,46 +62,46 @@ msgid ""
 "a location where Trader's Caravans will make a stop."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:184
+#: commoditymarket\default_markets.lua:186
 msgid "Right-click to summon a trader's caravan"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:316
+#: commoditymarket\default_markets.lua:318
 msgid "Trading Post"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:317
+#: commoditymarket\default_markets.lua:319
 msgid ""
 "This post signals passing caravan traders that customers can be found here, "
 "and signals to customers that caravan traders can be found here. If no "
 "caravan is present, right-click to summon one."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:318
+#: commoditymarket\default_markets.lua:320
 msgid ""
 "The trader's caravan requires a suitable open space next to the trading post "
 "for it to arrive, and takes some time to arrive after being summoned. The "
 "post gives a countdown to the caravan's arrival when moused over."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:365
+#: commoditymarket\default_markets.lua:367
 msgid ""
 "Indicated parking area isn't suitable.\n"
 "A 5x3 open space with solid ground\n"
 "is required for a caravan."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:375
+#: commoditymarket\default_markets.lua:377
 msgid ""
 "Caravan summoned\n"
 "ETA: @1 seconds."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:401
+#: commoditymarket\default_markets.lua:403
 msgid "Goblin Exchange"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:402
+#: commoditymarket\default_markets.lua:404
 msgid ""
 "One does not usually associate Goblins with the sort of sophistication that "
 "running a market requires. Usually one just associates Goblins with savagery "
@@ -113,11 +113,11 @@ msgid ""
 "brokers prefer to \"keep the change\" when giving back actual coal lumps)."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:433
+#: commoditymarket\default_markets.lua:435
 msgid "Undermarket"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:434
+#: commoditymarket\default_markets.lua:436
 msgid ""
 "Deep in the bowels of the world, below even the goblin-infested warrens and "
 "ancient delvings of the dwarves, dark and mysterious beings once dwelled. A "
@@ -128,18 +128,18 @@ msgid ""
 "renders it useless for other purposes."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:466
+#: commoditymarket\default_markets.lua:468
 msgid "Gold Coins"
 msgstr ""
 
-#: commoditymarket\default_markets.lua:467
+#: commoditymarket\default_markets.lua:469
 msgid ""
 "A gold ingot is far too valuable to use as a basic unit of value, so it has "
 "become common practice to divide the standard gold bar into one thousand "
 "small disks to make trade easier."
 msgstr ""
 
-#: commoditymarket\default_markets.lua:468
+#: commoditymarket\default_markets.lua:470
 msgid ""
 "Gold coins can be deposited and withdrawn from markets that accept them as "
 "currency. These markets can make change if you have a thousand coins and "
@@ -414,4 +414,35 @@ msgstr ""
 
 #: commoditymarket\formspecs.lua:462
 msgid "Show Itemnames"
+msgstr ""
+
+#: commoditymarket\market.lua:198
+msgid ""
+"You have too many items listed for sale in this market, please cancel some "
+"sell orders to make room for new ones."
+msgstr ""
+
+#: commoditymarket\market.lua:200
+msgid "You can't sell items for a negative price."
+msgstr ""
+
+#: commoditymarket\market.lua:202
+msgid "You can't sell fewer than one item."
+msgstr ""
+
+#: commoditymarket\market.lua:204
+msgid ""
+"You don't have enough of that item in your inventory to post this sell order."
+msgstr ""
+
+#: commoditymarket\market.lua:295
+msgid "You can't pay less than nothing for an item."
+msgstr ""
+
+#: commoditymarket\market.lua:297
+msgid "You have to buy at least one item."
+msgstr ""
+
+#: commoditymarket\market.lua:299
+msgid "You can't afford that many of this item."
 msgstr ""
