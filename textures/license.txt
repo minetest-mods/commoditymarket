@@ -3,7 +3,7 @@ commoditymarket_crown.png - from https://commons.wikimedia.org/wiki/File:Farm-Fr
 commoditymarket_moon.png - from https://commons.wikimedia.org/wiki/File:Luneta08.svg by Arturo D. Castillo —Zoram.hakaan— under the CC-BY 3.0 Unported license
 commoditymarket_goblin.png - cropped from the "goblins" mod, Copyright 2015 by Francisco "FreeLikeGNU" Athens Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 commoditymarket_empty_shelf.png - from the moreblocks mod's "moreblocks_empty_shelf", under the zlib license by Hugo Locurcio and contributors
-commoditymarket_search.png - Copyright © Diego Martínez (kaeza): CC BY-SA 3.0
+commoditymarket_search.png, commoditymarket_clear.png - Copyright © Diego Martínez (kaeza): CC BY-SA 3.0
 commoditymarket_shingles_wood.png is cottages_homedecor_shingles_wood.png from the cottages mod by VanessaE (CC-by-SA 3.0)
 
 commoditymarket_trade.png, commoditymarket_trade_flag.png, commoditymarket_under.png, and commoditymarket_under_top were created by FaceDeer and released under the CC0 public domain license

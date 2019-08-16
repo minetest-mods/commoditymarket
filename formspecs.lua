@@ -298,11 +298,13 @@ local get_market_formspec = function(market, account)
 	-- search field
 	formspec[#formspec+1] =	"container[2.5,5]field_close_on_enter[search_filter;false]"
 		.."field[0,0.85;2.5,1;search_filter;;"..minetest.formspec_escape(account.search or "").."]"
-		.."image_button[2.25,0.6;0.8,0.8;commoditymarket_search.png;apply_search;]"
+		.."image_button[2.05,0.65;0.8,0.8;commoditymarket_search.png;apply_search;]"
+		.."image_button[2.7,0.65;0.8,0.8;commoditymarket_clear.png;clear_search;]"
 		.."checkbox[1.77,0;filter_participating;My orders;".. account.filter_participating .."]"
 		.."tooltip[filter_participating;Select this to show only the markets where you have either a buy or a sell order pending.]"
 		.."tooltip[search_filter;Enter substring to search item identifiers for]"
 		.."tooltip[apply_search;Apply search to outputs]"
+		.."tooltip[clear_search;Clear search]"
 		.."container_end[]"
 
 	-- if a visible item market is selected, show the orders for it in detail
@@ -661,6 +663,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	
 	if fields.apply_search or fields.key_enter_field == "search_filter" then
+		something_changed = true
+	end
+	
+	if fields.clear_search then
+		account.search = ""
 		something_changed = true
 	end
 	
