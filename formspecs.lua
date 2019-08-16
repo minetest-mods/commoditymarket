@@ -1,3 +1,7 @@
+-- internationalization boilerplate
+local MP = minetest.get_modpath(minetest.get_current_modname())
+local S, NS = dofile(MP.."/intllib.lua")
+
 local get_icon = function(item)
 	local def = minetest.registered_items[item]
 	local returnstring = "unknown_item.png"
@@ -64,7 +68,7 @@ local get_account_formspec = function(market, account)
 
 	local formspec = {
 		"size[10,10]"
-		.."tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;2;false;true]"
+		.."tabheader[0,0;tabs;"..market_def.description..","..S("Your Inventory")..","..S("Market Orders")..";2;false;true]"
 	}
 	formspec[#formspec+1] = "tablecolumns[image"
 	for i=1, #inventory, 2 do
@@ -81,16 +85,16 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = ";text"
 	end
 	formspec[#formspec+1] = ";text;text,align=center]"
-		.."tooltip[inventory;All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.]"
+		.."tooltip[inventory;"..S("All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.").."]"
 		.."table[0,0;9.9,4;inventory;0"
 	if show_itemnames then
-		formspec[#formspec+1] = ",Item"
+		formspec[#formspec+1] = ","..S("Item")
 	end	
-	formspec[#formspec+1] = ",Description,Quantity,0"
+	formspec[#formspec+1] = ","..S("Description")..","..S("Quantity")..",0"
 	if show_itemnames then
-		formspec[#formspec+1] = ",Item"
+		formspec[#formspec+1] = ","..S("Item")
 	end	
-	formspec[#formspec+1] = ",Description,Quantity"
+	formspec[#formspec+1] = ","..S("Description")..","..S("Quantity")
 
 	for i, entry in ipairs(inventory) do
 		formspec[#formspec+1] = "," .. i
@@ -101,18 +105,18 @@ local get_account_formspec = function(market, account)
 	end	
 	
 	formspec[#formspec+1] = "]container[1.1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
-		.."label[1,0;Drop items here to\nadd to your account]"
+		.."label[1,0;"..S("Drop items here to\nadd to your account").."]"
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
 		
 	if market_def.inventory_limit then
-		formspec[#formspec+1] = "label[3,0;Inventory limit:\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
-			.. "tooltip[3,0;1.5,1;You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.]"
+		formspec[#formspec+1] = "label[3,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
+			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
 	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market_def.currency_symbol .. account.balance .. "]"
 		.."field[6.1,0.25;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
-		.."button[6.7,0;1.2,1;withdraw;Withdraw]"
-		.."tooltip[4.9,0;3.5,1;Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.]"
+		.."button[6.7,0;1.2,1;withdraw;"..S("Withdraw").."]"
+		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."container_end[]"
 		.."container[1.1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
@@ -129,7 +133,7 @@ local compare_market_item = function(mkt1, mkt2) return mkt1.item < mkt2.item en
 local compare_market_desc = function(mkt1, mkt2)
 	local def1 = minetest.registered_items[mkt1.item] or {}
 	local def2 = minetest.registered_items[mkt2.item] or {}
-	return (def1.description or "Unknown Item") < (def2.description or "Unknown Item")
+	return (def1.description or S("Unknown Item")) < (def2.description or S("Unknown Item"))
 end
 local compare_buy_volume = function(mkt1, mkt2) return mkt1.buy_volume > mkt2.buy_volume end
 local compare_buy_max = function(mkt1, mkt2)
@@ -218,7 +222,7 @@ local get_market_formspec = function(market, account)
 
 	local formspec = {
 		"size[10,10]"
-		.."tabheader[0,0;tabs;"..market_def.description..",Your Inventory,Market Orders;3;false;true]"
+		.."tabheader[0,0;tabs;"..market_def.description..","..S("Your Inventory")..","..S("Market Orders")..";3;false;true]"
 		.."tablecolumns[image" -- icon
 	}
 	
@@ -232,13 +236,13 @@ local get_market_formspec = function(market, account)
 	end
 	formspec[#formspec+1] = "text;" -- description
 		.."color,span=2;"
-		.."text,align=right,tooltip=Number of items there's demand for in the market;"
-		.."text,align=right,tooltip=Maximum price being offered to buy one of these;"
+		.."text,align=right,tooltip="..S("Number of items there's demand for in the market.")..";"
+		.."text,align=right,tooltip="..S("Maximum price being offered to buy one of these.")..";"
 		.."color,span=2;"
-		.."text,align=right,tooltip=Number of items available for sale in the market;"
-		.."text,align=right,tooltip=Minimum price being demanded to sell one of these;"
-		.."text,align=right,tooltip=Price paid for one of these the last time one was sold;"
-		.."text,align=right,tooltip=Quantity of this item that you have in your inventory ready to sell]"
+		.."text,align=right,tooltip="..S("Number of items available for sale in the market.")..";"
+		.."text,align=right,tooltip="..S("Minimum price being demanded to sell one of these.")..";"
+		.."text,align=right,tooltip="..S("Price paid for one of these the last time one was sold.")..";"
+		.."text,align=right,tooltip="..S("Quantity of this item that you have in your inventory ready to sell.").."]"
 		.."table[0,0;9.9,5;summary;"
 		.."0"-- icon
 
@@ -246,7 +250,8 @@ local get_market_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = ",Item" -- itemname
 	end
-	formspec[#formspec+1] = ",Description,#00FF00,Buy Vol,Buy Max,#FF0000,Sell Vol,Sell Min,Last Price,Inventory"
+	formspec[#formspec+1] = ","..S("Description")..",#00FF00,"..S("Buy Vol")..","..S("Buy Max")
+		..",#FF0000,"..S("Sell Vol")..","..S("Sell Min")..","..S("Last Price")..","..S("Inventory")
 
 	local selected_idx
 	local selected_row
@@ -267,7 +272,7 @@ local get_market_formspec = function(market, account)
 			formspec[#formspec+1] = "," .. item_display
 		end
 		
-		local def = minetest.registered_items[row.item] or {description = "Unknown Item"}
+		local def = minetest.registered_items[row.item] or {description = S("Unknown Item")}
 		local desc_display = def.description:gsub("\n", " ")
 		if desc_display:len() > truncate_length then
 			desc_display = desc_display:sub(1,truncate_length-2).."..."
@@ -300,11 +305,11 @@ local get_market_formspec = function(market, account)
 		.."field[0,0.85;2.5,1;search_filter;;"..minetest.formspec_escape(account.search or "").."]"
 		.."image_button[2.05,0.65;0.8,0.8;commoditymarket_search.png;apply_search;]"
 		.."image_button[2.7,0.65;0.8,0.8;commoditymarket_clear.png;clear_search;]"
-		.."checkbox[1.77,0;filter_participating;My orders;".. account.filter_participating .."]"
-		.."tooltip[filter_participating;Select this to show only the markets where you have either a buy or a sell order pending.]"
-		.."tooltip[search_filter;Enter substring to search item identifiers for]"
-		.."tooltip[apply_search;Apply search to outputs]"
-		.."tooltip[clear_search;Clear search]"
+		.."checkbox[1.77,0;filter_participating;"..S("My orders")..";".. account.filter_participating .."]"
+		.."tooltip[filter_participating;"..S("Select this to show only the markets where you have either a buy or a sell order pending.").."]"
+		.."tooltip[search_filter;"..S("Enter substring to search item identifiers for.").."]"
+		.."tooltip[apply_search;"..S("Apply search to outputs.").."]"
+		.."tooltip[clear_search;"..S("Clear search.").."]"
 		.."container_end[]"
 
 	-- if a visible item market is selected, show the orders for it in detail
@@ -315,13 +320,13 @@ local get_market_formspec = function(market, account)
 		if show_itemnames then
 			desc_display = selected
 		else
-			local def = minetest.registered_items[selected_row.item] or {description="Unknown Item"}
+			local def = minetest.registered_items[selected_row.item] or {description=S("Unknown Item")}
 			desc_display = def.description:gsub("\n", " ")
 		end
 
 		-- player inventory for this item and for currency
-		formspec[#formspec+1] = "label[0.1,5.1;"..desc_display.."\nIn inventory: "
-			.. tostring(account.inventory[selected] or 0) .."\nBalance: "..market_def.currency_symbol..account.balance .."]"
+		formspec[#formspec+1] = "label[0.1,5.1;"..desc_display.."\n"..S("In inventory:").." "
+			.. tostring(account.inventory[selected] or 0) .."\n"..S("Balance:").." "..market_def.currency_symbol..account.balance .."]"
 		-- buy/sell controls
 			.. "container[6,5]"
 		local sell_limit = market_def.sell_limit
@@ -334,28 +339,27 @@ local get_market_formspec = function(market, account)
 					end
 				end
 			end
-			formspec[#formspec+1] = "label[0,0;Sell limit: ".. total_sell .. "/" .. sell_limit .."]"
-				.."tooltip[0,0;2,0.25;This market limits the total number of items a given seller can have for sale at a time.\nYou have "
-				..sell_limit-total_sell.." items remaining. Cancel old sell orders to free up space.]"
+			formspec[#formspec+1] = "label[0,0;"..S("Sell limit:").." ".. total_sell .. "/" .. sell_limit .."]"
+				.."tooltip[0,0;2,0.25;"..S("This market limits the total number of items a given seller can have for sale at a time.\nYou have @1 items remaining. Cancel old sell orders to free up space.", sell_limit-total_sell).."]"
 		end
-		formspec[#formspec+1] = "button[0,0.5;1,1;buy;Buy]field[1.3,0.85;1,1;quantity;Quantity;]"
-			.."field[2.3,0.85;1,1;price;Price per;]button[3,0.5;1,1;sell;Sell]"
+		formspec[#formspec+1] = "button[0,0.5;1,1;buy;"..S("Buy").."]field[1.3,0.85;1,1;quantity;"..S("Quantity")..";]"
+			.."field[2.3,0.85;1,1;price;"..S("Price per")..";]button[3,0.5;1,1;sell;Sell]"
 			.."field_close_on_enter[quantity;false]field_close_on_enter[price;false]"
-			.."tooltip[0,0.25;3.75,1;Use these fields to enter buy and sell orders for the selected item]"
+			.."tooltip[0,0.25;3.75,1;"..S("Use these fields to enter buy and sell orders for the selected item.").."]"
 			.."container_end[]"
 		-- table of buy and sell orders
 			.."tablecolumns[color;text;"
-			.."text,align=right,tooltip=The price per item in this order;"
-			.."text,align=right,tooltip=The total amount of items in this particular order;"
-			.."text,align=right,tooltip=The total amount of items available at this price accounting for the other orders also currently being offered;"
-			.."text,tooltip=The name of the player who placed this order;"
-			.."text,align=right,tooltip=How many days ago this order was placed]"
+			.."text,align=right,tooltip="..S("The price per item in this order.")..";"
+			.."text,align=right,tooltip="..S("The total amount of items in this particular order.")..";"
+			.."text,align=right,tooltip="..S("The total amount of items available at this price accounting for the other orders also currently being offered.")..";"
+			.."text,tooltip="..S("The name of the player who placed this order.\nDouble-click your own orders to cancel them.")..";"
+			.."text,align=right,tooltip="..S("How many days ago this order was placed.").."]"
 		
-			.."table[0,6.5;9.9,3.5;orders;#FFFFFF,Order,Price,Quantity,Total Volume,Player,Days Old"
+			.."table[0,6.5;9.9,3.5;orders;#FFFFFF,"..S("Order")..","..S("Price")..","..S("Quantity")..","..S("Total Volume")..","..S("Player")..","..S("Days Old")
 
 		local sell_volume = selected_row.sell_volume
 		for i, sell in ipairs(selected_row.sell_orders) do
-			formspec[#formspec+1] = ",#FF0000,Sell,"
+			formspec[#formspec+1] = ",#FF0000,"..S("Sell")..","
 				..sell.price..","
 				..sell.quantity..","
 				..sell_volume..","
@@ -370,7 +374,7 @@ local get_market_formspec = function(market, account)
 		for i = buy_count, 1, -1  do
 			buy = buy_orders[i]
 			buy_volume = buy_volume + buy.quantity
-			formspec[#formspec+1] = ",#00FF00,Buy,"
+			formspec[#formspec+1] = ",#00FF00,"..S("Buy")..","
 				..buy.price..","
 				..buy.quantity..","
 				..buy_volume..","
@@ -379,7 +383,7 @@ local get_market_formspec = function(market, account)
 		end
 		formspec[#formspec+1] = "]"
 	else
-		formspec[#formspec+1] = "label[0.1,5.1;Select an item to view or place orders]"
+		formspec[#formspec+1] = "label[0.1,5.1;"..S("Select an item to view or place orders.").."]"
 	end
 	return table.concat(formspec)
 end
@@ -394,19 +398,19 @@ local log_to_string = function(market, log_entry, account)
 	local seller = log_entry.seller
 	local purchaser_name
 	if purchaser == seller then
-		purchaser_name = "yourself"
+		purchaser_name = S("yourself")
 	elseif anonymous and purchaser ~= account then
-		purchaser_name = "someone"
+		purchaser_name = S("someone")
 	elseif purchaser == account then
-		purchaser_name = "you"
+		purchaser_name = S("you")
 	else
 		purchaser_name = purchaser.name
 	end
 	local seller_name
 	if anonymous and seller ~= account then
-		seller_name = "someone"
+		seller_name = S("someone")
 	elseif seller == account then
-		seller_name = "you"
+		seller_name = S("you")
 	else
 		seller_name = seller.name
 	end
@@ -422,17 +426,18 @@ local log_to_string = function(market, log_entry, account)
 		new = false
 	end
 
-	return colour .. "On day " .. math.ceil(log_entry.timestamp/86400) .. " " .. seller_name .. " sold " .. log_entry.quantity .. " "
-		.. log_entry.item .. " to " .. purchaser_name .. " at " .. market.def.currency_symbol .. log_entry.price .. " each.", new
+	return colour .. S("On day @1 @2 sold @3 @4 to @5 at @6@7 each.",
+			math.ceil(log_entry.timestamp/86400), seller_name, log_entry.quantity, log_entry.item,
+			purchaser_name, market.def.currency_symbol, log_entry.price), new
 end
 
 
 local get_info_formspec = function(market, account)
 	local formspec = {
 		"size[10,10]"
-		.."tabheader[0,0;tabs;"..market.def.description..",Your Inventory,Market Orders;1;false;true]"
-		.."textarea[0.5,0.5;9.5,1.5;;Description:;"..market.def.long_description.."]"
-		.."label[0.5,2.2;Your Recent Purchases and Sales:]"
+		.."tabheader[0,0;tabs;"..market.def.description..","..S("Your Inventory")..","..S("Market Orders")..";1;false;true]"
+		.."textarea[0.5,0.5;9.5,1.5;;"..S("Description:")..";"..market.def.long_description.."]"
+		.."label[0.5,2.2;"..S("Your Recent Purchases and Sales:").."]"
 		.."textlist[0.5,2.6;8.5,4;log_entries;"
 	}
 	if next(account.log) then
@@ -445,16 +450,16 @@ local get_info_formspec = function(market, account)
 		end
 		formspec[#formspec] = "]" -- Note: there's no +1 here deliberately, that way the "]" overwrites the last comma added by the loop above.
 		if new then
-			formspec[#formspec+1] = "button[7.1,6.9;2,0.5;acknowledge_log;Mark logs as read]" ..
-			"tooltip[acknowledge_log;Log entries in yellow are new since last time you marked your log as read]"
+			formspec[#formspec+1] = "button[7.1,6.9;2,0.5;acknowledge_log;"..S("Mark logs as read").."]" ..
+			"tooltip[acknowledge_log;"..S("Log entries in yellow are new since last time you marked your log as read.").."]"
 		end
 	else
-		formspec[#formspec+1] = "#CCCCCCNo logged activites in this market yet]"
+		formspec[#formspec+1] = "#CCCCCC"..S("No logged activites in this market yet.").."]"
 	end
 	
 	local show_itemnames = account.show_itemnames or "false"
 
-	formspec[#formspec+1] = "]container[0.5, 7.5]label[0,0;Settings:]checkbox[0,0.25;show_itemnames;Show Itemnames;"
+	formspec[#formspec+1] = "]container[0.5, 7.5]label[0,0;Settings:]checkbox[0,0.25;show_itemnames;"..S("Show Itemnames")..";"
 		..show_itemnames.."]container_end[]"
 	
 	return table.concat(formspec)

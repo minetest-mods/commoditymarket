@@ -1,0 +1,417 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-16 00:40-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: commoditymarket\default_markets.lua:12
+msgid "Right-click on this to open the market interface."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:20
+msgid "King's Market"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:21
+msgid ""
+"The largest and most accessible market for the common man, the King's Market "
+"uses gold coins as its medium of exchange (or the equivalent in gold ingots "
+"- 1000 coins to the ingot). However, as a respectable institution of the "
+"surface world, the King's Market operates only during the hours of daylight. "
+"The purchase and sale of swords and explosives is prohibited in the King's "
+"Market. Gold coins are represented by a '☼' symbol."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:58
+msgid "At this time of day the King's Market is closed."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:68
+msgid "Night Market"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:101
+msgid "At this time of day the Night Market is closed."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:115
+msgid "Trader's Caravan"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:116
+msgid ""
+"Unlike most markets that have well-known fixed locations that travelers "
+"congregate to, the network of Trader's Caravans is fluid and dynamic in "
+"their locations. A Trader's Caravan can show up anywhere, make modest "
+"trades, and then be gone the next time you visit them. These caravans accept "
+"gold and gold coins as a currency (one gold ingot to one thousand gold coins "
+"exchange rate). Any reasonably-wealthy person can create a signpost marking "
+"a location where Trader's Caravans will make a stop."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:184
+msgid "Right-click to summon a trader's caravan"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:316
+msgid "Trading Post"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:317
+msgid ""
+"This post signals passing caravan traders that customers can be found here, "
+"and signals to customers that caravan traders can be found here. If no "
+"caravan is present, right-click to summon one."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:318
+msgid ""
+"The trader's caravan requires a suitable open space next to the trading post "
+"for it to arrive, and takes some time to arrive after being summoned. The "
+"post gives a countdown to the caravan's arrival when moused over."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:365
+msgid ""
+"Indicated parking area isn't suitable.\n"
+"A 5x3 open space with solid ground\n"
+"is required for a caravan."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:375
+msgid ""
+"Caravan summoned\n"
+"ETA: @1 seconds."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:401
+msgid "Goblin Exchange"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:402
+msgid ""
+"One does not usually associate Goblins with the sort of sophistication that "
+"running a market requires. Usually one just associates Goblins with savagery "
+"and violence. But they understand the principle of tit-for-tat exchange, and "
+"if approached correctly they actually respect the concepts of ownership and "
+"debt. However, for some peculiar reason they understand this concept in the "
+"context of coal lumps. Goblins deal in the standard coal lump as their form "
+"of currency, conceptually divided into 100 coal centilumps (though Goblin "
+"brokers prefer to \"keep the change\" when giving back actual coal lumps)."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:433
+msgid "Undermarket"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:434
+msgid ""
+"Deep in the bowels of the world, below even the goblin-infested warrens and "
+"ancient delvings of the dwarves, dark and mysterious beings once dwelled. A "
+"few still linger to this day, and facilitate barter for those brave souls "
+"willing to travel in their lost realms. The Undermarket uses Mese chips "
+"('₥') as a currency - twenty chips to the Mese fragment. Though traders are "
+"loathe to physically break Mese crystals up into units that small, as it "
+"renders it useless for other purposes."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:466
+msgid "Gold Coins"
+msgstr ""
+
+#: commoditymarket\default_markets.lua:467
+msgid ""
+"A gold ingot is far too valuable to use as a basic unit of value, so it has "
+"become common practice to divide the standard gold bar into one thousand "
+"small disks to make trade easier."
+msgstr ""
+
+#: commoditymarket\default_markets.lua:468
+msgid ""
+"Gold coins can be deposited and withdrawn from markets that accept them as "
+"currency. These markets can make change if you have a thousand coins and "
+"would like them back in ingot form again."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:71
+#: commoditymarket\formspecs.lua:225
+#: commoditymarket\formspecs.lua:438
+msgid "Your Inventory"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:71
+#: commoditymarket\formspecs.lua:225
+#: commoditymarket\formspecs.lua:438
+msgid "Market Orders"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:88
+msgid ""
+"All the items you've transfered to the market to sell and the items you've\n"
+"purchased with buy orders. Double-click on an item to bring it back into "
+"your\n"
+"personal inventory."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:91
+#: commoditymarket\formspecs.lua:95
+msgid "Item"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:93
+#: commoditymarket\formspecs.lua:97
+#: commoditymarket\formspecs.lua:253
+msgid "Description"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:93
+#: commoditymarket\formspecs.lua:97
+#: commoditymarket\formspecs.lua:345
+#: commoditymarket\formspecs.lua:358
+msgid "Quantity"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:108
+msgid ""
+"Drop items here to\n"
+"add to your account"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:112
+msgid "Inventory limit:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:113
+msgid ""
+"You can still receive purchased items if you've exceeded your inventory "
+"limit,\n"
+"but you won't be able to transfer items from your personal inventory into\n"
+"the market until you've emptied it back down below the limit again."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:118
+msgid "Withdraw"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:119
+msgid ""
+"Enter the amount of currency you'd like to withdraw then click the "
+"'Withdraw'\n"
+"button to convert it into items and transfer it to your personal inventory."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:136
+#: commoditymarket\formspecs.lua:275
+#: commoditymarket\formspecs.lua:323
+msgid "Unknown Item"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:239
+msgid "Number of items there's demand for in the market."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:240
+msgid "Maximum price being offered to buy one of these."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:242
+msgid "Number of items available for sale in the market."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:243
+msgid "Minimum price being demanded to sell one of these."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:244
+msgid "Price paid for one of these the last time one was sold."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:245
+msgid "Quantity of this item that you have in your inventory ready to sell."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:253
+msgid "Buy Vol"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:253
+msgid "Buy Max"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:254
+msgid "Sell Vol"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:254
+msgid "Sell Min"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:254
+msgid "Last Price"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:254
+msgid "Inventory"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:308
+msgid "My orders"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:309
+msgid ""
+"Select this to show only the markets where you have either a buy or a sell "
+"order pending."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:310
+msgid "Enter substring to search item identifiers for."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:311
+msgid "Apply search to outputs."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:312
+msgid "Clear search."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:328
+msgid "In inventory:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:329
+msgid "Balance:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:342
+msgid "Sell limit:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:343
+msgid ""
+"This market limits the total number of items a given seller can have for "
+"sale at a time.\n"
+"You have @1 items remaining. Cancel old sell orders to free up space."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:345
+#: commoditymarket\formspecs.lua:377
+msgid "Buy"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:346
+msgid "Price per"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:348
+msgid "Use these fields to enter buy and sell orders for the selected item."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:352
+msgid "The price per item in this order."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:353
+msgid "The total amount of items in this particular order."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:354
+msgid ""
+"The total amount of items available at this price accounting for the other "
+"orders also currently being offered."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:355
+msgid ""
+"The name of the player who placed this order.\n"
+"Double-click your own orders to cancel them."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:356
+msgid "How many days ago this order was placed."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:358
+msgid "Order"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:358
+msgid "Price"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:358
+msgid "Total Volume"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:358
+msgid "Player"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:358
+msgid "Days Old"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:362
+msgid "Sell"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:386
+msgid "Select an item to view or place orders."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:401
+msgid "yourself"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:403
+#: commoditymarket\formspecs.lua:411
+msgid "someone"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:405
+#: commoditymarket\formspecs.lua:413
+msgid "you"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:429
+msgid "On day @1 @2 sold @3 @4 to @5 at @6@7 each."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:439
+msgid "Description:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:440
+msgid "Your Recent Purchases and Sales:"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:453
+msgid "Mark logs as read"
+msgstr ""
+
+#: commoditymarket\formspecs.lua:454
+msgid ""
+"Log entries in yellow are new since last time you marked your log as read."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:457
+msgid "No logged activites in this market yet."
+msgstr ""
+
+#: commoditymarket\formspecs.lua:462
+msgid "Show Itemnames"
+msgstr ""
