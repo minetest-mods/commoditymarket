@@ -86,7 +86,7 @@ local get_account_formspec = function(market, account)
 	end
 	formspec[#formspec+1] = ";text;text,align=center]"
 		.."tooltip[inventory;"..S("All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.").."]"
-		.."table[0,0;9.9,4;inventory;0"
+		.."table[0,0;9.75,4;inventory;0"
 	if show_itemnames then
 		formspec[#formspec+1] = ","..S("Item")
 	end	
@@ -104,7 +104,7 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = "," .. entry.description:gsub("\n", " ") .. "," .. entry.quantity
 	end	
 	
-	formspec[#formspec+1] = "]container[1.1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
+	formspec[#formspec+1] = "]container[1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
 		.."label[1,0;"..S("Drop items here to\nadd to your account").."]"
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
 		
@@ -113,12 +113,12 @@ local get_account_formspec = function(market, account)
 			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
 	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market_def.currency_symbol .. account.balance .. "]"
-		.."field[6.1,0.25;1,1;withdrawamount;;]"
+		.."field[6.1,0.325;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
 		.."button[6.7,0;1.2,1;withdraw;"..S("Withdraw").."]"
 		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."container_end[]"
-		.."container[1.1,5.75]list[current_player;main;0,0;8,1;]"
+		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
 	return table.concat(formspec)
 end
@@ -243,7 +243,7 @@ local get_market_formspec = function(market, account)
 		.."text,align=right,tooltip="..S("Minimum price being demanded to sell one of these.")..";"
 		.."text,align=right,tooltip="..S("Price paid for one of these the last time one was sold.")..";"
 		.."text,align=right,tooltip="..S("Quantity of this item that you have in your inventory ready to sell.").."]"
-		.."table[0,0;9.9,5;summary;"
+		.."table[0,0;9.75,5;summary;"
 		.."0"-- icon
 
 	-- header row
@@ -328,7 +328,7 @@ local get_market_formspec = function(market, account)
 		formspec[#formspec+1] = "label[0.1,5.1;"..desc_display.."\n"..S("In inventory:").." "
 			.. tostring(account.inventory[selected] or 0) .."\n"..S("Balance:").." "..market_def.currency_symbol..account.balance .."]"
 		-- buy/sell controls
-			.. "container[6,5]"
+			.. "container[6.1,5]"
 		local sell_limit = market_def.sell_limit
 		if sell_limit then
 			local total_sell = 0
@@ -342,8 +342,8 @@ local get_market_formspec = function(market, account)
 			formspec[#formspec+1] = "label[0,0;"..S("Sell limit:").." ".. total_sell .. "/" .. sell_limit .."]"
 				.."tooltip[0,0;2,0.25;"..S("This market limits the total number of items a given seller can have for sale at a time.\nYou have @1 items remaining. Cancel old sell orders to free up space.", sell_limit-total_sell).."]"
 		end
-		formspec[#formspec+1] = "button[0,0.5;1,1;buy;"..S("Buy").."]field[1.3,0.85;1,1;quantity;"..S("Quantity")..";]"
-			.."field[2.3,0.85;1,1;price;"..S("Price per")..";]button[3,0.5;1,1;sell;Sell]"
+		formspec[#formspec+1] = "button[0,0.55;1,1;buy;"..S("Buy").."]field[1.2,0.85;1,1;quantity;"..S("Quantity")..";]"
+			.."field[2.1,0.85;1,1;price;"..S("Price per")..";]button[2.7,0.55;1,1;sell;Sell]"
 			.."field_close_on_enter[quantity;false]field_close_on_enter[price;false]"
 			.."tooltip[0,0.25;3.75,1;"..S("Use these fields to enter buy and sell orders for the selected item.").."]"
 			.."container_end[]"
@@ -355,7 +355,7 @@ local get_market_formspec = function(market, account)
 			.."text,tooltip="..S("The name of the player who placed this order.\nDouble-click your own orders to cancel them.")..";"
 			.."text,align=right,tooltip="..S("How many days ago this order was placed.").."]"
 		
-			.."table[0,6.5;9.9,3.5;orders;#FFFFFF,"..S("Order")..","..S("Price")..","..S("Quantity")..","..S("Total Volume")..","..S("Player")..","..S("Days Old")
+			.."table[0,6.5;9.75,3.5;orders;#FFFFFF,"..S("Order")..","..S("Price")..","..S("Quantity")..","..S("Total Volume")..","..S("Player")..","..S("Days Old")
 
 		local sell_volume = selected_row.sell_volume
 		for i, sell in ipairs(selected_row.sell_orders) do
@@ -436,9 +436,9 @@ local get_info_formspec = function(market, account)
 	local formspec = {
 		"size[10,10]"
 		.."tabheader[0,0;tabs;"..market.def.description..","..S("Your Inventory")..","..S("Market Orders")..";1;false;true]"
-		.."textarea[0.5,0.5;9.5,1.5;;"..S("Description:")..";"..market.def.long_description.."]"
+		.."textarea[0.75,0.5;9.25,1.5;;"..S("Description:")..";"..market.def.long_description.."]"
 		.."label[0.5,2.2;"..S("Your Recent Purchases and Sales:").."]"
-		.."textlist[0.5,2.6;8.5,4;log_entries;"
+		.."textlist[0.5,2.6;8.75,4;log_entries;"
 	}
 	if next(account.log) then
 		local new = false
