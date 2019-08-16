@@ -372,7 +372,7 @@ local get_market_formspec = function(market, account)
 		local buy_count = #buy_orders
 		-- Show buy orders in reverse order
 		for i = buy_count, 1, -1  do
-			buy = buy_orders[i]
+			local buy = buy_orders[i]
 			buy_volume = buy_volume + buy.quantity
 			formspec[#formspec+1] = ",#00FF00,"..S("Buy")..","
 				..buy.price..","
