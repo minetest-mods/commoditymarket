@@ -553,7 +553,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local selected_order
 			if selected_idx <= sell_order_count then -- if the index is within the range of sell orders, 
 				selected_order = sell_orders[selected_idx]
-				if selected_order.account == account then -- and the order belongs to the current player,
+				if selected_order and selected_order.account == account then -- and the order belongs to the current player,
 					market:cancel_sell(account.selected, selected_order) -- cancel it
 					something_changed = true
 				end
@@ -562,7 +562,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				local buy_orders = selected_row.buy_orders
 				local buy_orders_count = #buy_orders
 				selected_order = buy_orders[buy_orders_count - (selected_idx - sell_order_count - 1)]
-				if selected_order.account == account then
+				if selected_order and selected_order.account == account then
 					market:cancel_buy(account.selected, selected_order)
 					something_changed = true
 				end
