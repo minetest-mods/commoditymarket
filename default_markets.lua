@@ -302,12 +302,13 @@ local is_suitable_caravan_space = function(pos, facedir)
 			if node_def == nil or node_def.walkable ~= true then return false end
 		end
 	end
-	-- air in the rest?
+	-- buildable_to in the rest?
 	for y = pos.y, pos.y+2, 1 do
 		for x = pos.x - x_dim, pos.x + x_dim, 1 do
 			for z = pos.z - z_dim, pos.z + z_dim, 1 do
 				local node = minetest.get_node({x=x, y=y, z=z})
-				if node.name ~= "air" then return false end
+				local node_def = minetest.registered_nodes[node.name]
+				if node_def == nil or node_def.buildable_to ~= true then return false end
 			end
 		end
 	end
