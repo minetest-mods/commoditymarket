@@ -425,10 +425,19 @@ local log_to_string = function(market, log_entry, account)
 		colour = "#FFFFFF"
 		new = false
 	end
+	
+	local show_itemnames = account.show_itemnames == "true"
+	local itemname = log_entry.item
+	if not show_itemnames then
+		local item_def = minetest.registered_items[log_entry.item]
+		if item_def then
+			itemname = item_def.description
+		end
+	end
 
-	return colour .. S("On day @1 @2 sold @3 @4 to @5 at @6@7 each.",
-			math.ceil(log_entry.timestamp/86400), seller_name, log_entry.quantity, log_entry.item,
-			purchaser_name, market.def.currency_symbol, log_entry.price), new
+	return colour .. S("On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @6@8.",
+			math.ceil(log_entry.timestamp/86400), seller_name, log_entry.quantity, itemname,
+			purchaser_name, market.def.currency_symbol, log_entry.price, log_entry.quantity*log_entry.price), new
 end
 
 
