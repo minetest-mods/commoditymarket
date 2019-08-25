@@ -165,7 +165,6 @@ local sort_marketlist = function(item_list, account)
 	elseif sort_by == 9 then
 		table.sort(item_list, compare_last_price)
 	elseif sort_by == 10 then
-		account_context = account
 		table.sort(item_list, function(mkt1, mkt2)
 			-- Define locally so that account is available
 			return (account.inventory[mkt1.item] or 0) > (account.inventory[mkt2.item] or 0)
