@@ -27,6 +27,6 @@ minetest.register_chatcommand("market.list", {
 			table.insert(list, marketname)
 		end
 		table.sort(list)
-		minetest.chat_send_player(name, "Regstered markets: " .. table.concat(list, ", "))
+		minetest.chat_send_player(name, "Registered markets: " .. table.concat(list, ", "))
 	end,
 })
