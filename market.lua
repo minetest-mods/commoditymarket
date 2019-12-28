@@ -450,15 +450,14 @@ end
 local MP = minetest.get_modpath(minetest.get_current_modname())
 local persistence_store, persistence_load = dofile(MP.."/persistence.lua")
 
+local worldpath = minetest.get_worldpath()
 local load_market_data = function(marketname)
-	local path = minetest.get_worldpath()
-	local filename = path .. "/market_"..marketname..".lua"
+	local filename = worldpath .. "/market_"..marketname..".lua"
 	return persistence_load(filename)
 end
 
 local save_market_data = function(market)
-	local path = minetest.get_worldpath()
-	local filename = path .. "/market_"..market.name..".lua"
+	local filename = worldpath .. "/market_"..market.name..".lua"
 	local data = {}
 	data.player_accounts = market.player_accounts
 	data.orders_for_items = market.orders_for_items
