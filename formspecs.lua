@@ -38,9 +38,9 @@ end
 local get_item_description = function(item)
 	local def = minetest.registered_items[item]
 	if def then
-		return def.description:gsub("\n", " ")
+		return minetest.formspec_escape(def.description:gsub("\n", " "))
 	end
-	return "Unknown Item"
+	return S("Unknown Item")
 end
 
 -- Inventory formspec
@@ -101,7 +101,8 @@ local get_account_formspec = function(market, account)
 		if show_itemnames then
 			formspec[#formspec+1] = "," .. entry.item
 		end	
-		formspec[#formspec+1] = "," .. entry.description:gsub("\n", " ") .. "," .. entry.quantity
+		-- no need to formspec_escape description here, it gets done when it's initially added to the inventory table
+		formspec[#formspec+1] = "," .. entry.description .. "," .. entry.quantity
 	end	
 	
 	formspec[#formspec+1] = "]container[1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
@@ -272,7 +273,7 @@ local get_market_formspec = function(market, account)
 		end
 		
 		local def = minetest.registered_items[row.item] or {description = S("Unknown Item")}
-		local desc_display = def.description:gsub("\n", " ")
+		local desc_display = minetest.formspec_escape(def.description:gsub("\n", " "))
 		if desc_display:len() > truncate_length then
 			desc_display = desc_display:sub(1,truncate_length-2).."..."
 		end
@@ -320,7 +321,7 @@ local get_market_formspec = function(market, account)
 			desc_display = selected
 		else
 			local def = minetest.registered_items[selected_row.item] or {description=S("Unknown Item")}
-			desc_display = def.description:gsub("\n", " ")
+			desc_display = minetest.formspec_escape(def.description:gsub("\n", " "))
 		end
 
 		-- player inventory for this item and for currency
@@ -341,10 +342,11 @@ local get_market_formspec = function(market, account)
 			formspec[#formspec+1] = "label[0,0;"..S("Sell limit:").." ".. total_sell .. "/" .. sell_limit .."]"
 				.."tooltip[0,0;2,0.25;"..S("This market limits the total number of items a given seller can have for sale at a time.\nYou have @1 items remaining. Cancel old sell orders to free up space.", sell_limit-total_sell).."]"
 		end
-		formspec[#formspec+1] = "button[0,0.55;1,1;buy;"..S("Buy").."]field[1.2,0.85;1,1;quantity;"..S("Quantity")..";]"
+		-- Buy, sell, quantity and price button
+		formspec[#formspec+1] = "tooltip[0,0.25;3.75,1;"..S("Use these fields to enter buy and sell orders for the selected item.").."]"
+			.."button[0,0.55;1,1;buy;"..S("Buy").."]field[1.2,0.85;1,1;quantity;"..S("Quantity")..";]"
 			.."field[2.1,0.85;1,1;price;"..S("Price per")..";]button[2.7,0.55;1,1;sell;Sell]"
 			.."field_close_on_enter[quantity;false]field_close_on_enter[price;false]"
-			.."tooltip[0,0.25;3.75,1;"..S("Use these fields to enter buy and sell orders for the selected item.").."]"
 			.."container_end[]"
 		-- table of buy and sell orders
 			.."tablecolumns[color;text;"
@@ -430,7 +432,7 @@ local log_to_string = function(market, log_entry, account)
 	if not show_itemnames then
 		local item_def = minetest.registered_items[log_entry.item]
 		if item_def then
-			itemname = item_def.description
+			itemname = minetest.formspec_escape(item_def.description:gsub("\n", " "))
 		end
 	end
 

@@ -468,9 +468,9 @@ end
 commoditymarket.register_market = function(market_name, market_def)
 	assert(not commoditymarket.registered_markets[market_name])
 	
-	market_def.currency_symbol = market_def.currency_symbol or "¤" -- \u{00A4} -- defaults to the generic currency symbol ("scarab")
-	market_def.description = market_def.description or "Market"
-	market_def.long_description = market_def.long_description or "A market where orders to buy or sell items can be placed and fulfilled."
+	market_def.currency_symbol = minetest.formspec_escape(market_def.currency_symbol) or "¤" -- \u{00A4} -- defaults to the generic currency symbol ("scarab")
+	market_def.description = minetest.formspec_escape(market_def.description) or "Market"
+	market_def.long_description = minetest.formspec_escape(market_def.long_description) or "A market where orders to buy or sell items can be placed and fulfilled."
 	
 	-- Reprocess currency table into a form easier for the withdraw code to work with
 	market_def.currency_ordered = {}
