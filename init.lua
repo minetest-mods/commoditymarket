@@ -5,6 +5,8 @@ dofile(MP.."/formspecs.lua")
 dofile(MP.."/market.lua")
 dofile(MP.."/default_markets.lua")
 
+dofile(MP.."/mapgen_dungeon_markets.lua")
+
 minetest.register_chatcommand("market.show", {
 	params = "marketname",
 	privs = {server=true},
