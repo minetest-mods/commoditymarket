@@ -465,12 +465,49 @@ local save_market_data = function(market)
 	return true
 end
 
+local make_doc_entry = function() return end
+if minetest.get_modpath("doc") then
+	make_doc_entry = function(market_name, market_def)
+		local currencies = {}
+		for _, currency_item in ipairs(market_def.currency_ordered) do
+			local item_def = minetest.registered_items[currency_item.item]
+			table.insert(currencies, S("1 @1 = @2@3", item_def.description, market_def.currency_symbol, currency_item.amount))
+		end
+		local inventory_limit
+		if market_def.inventory_limit then
+			inventory_limit = S("Market inventory is limited to @1 items.", market_def.inventory_limit)
+		else
+			inventory_limit = S("Market has unlimited inventory space.")
+		end
+		
+		local sell_limit	
+		if market_def.sell_limit then
+			sell_limit = S("Total pending sell orders are limited to @1 items.", market_def.inventory_limit)
+		else
+			sell_limit = S("Market supports unlimited pending sell orders.")
+		end
+		
+		doc.add_entry("commoditymarket", "market_"..market_name, {
+			name = market_def.description,
+			data = { text = market_def.long_description
+				.."\n\n"
+				..S("Currency item values:") .. "\n    " .. table.concat(currencies, "\n    ")
+				.."\n\n"
+				..inventory_limit
+				.."\n"
+				..sell_limit
+			}
+		})
+	end
+end
+
 commoditymarket.register_market = function(market_name, market_def)
 	assert(not commoditymarket.registered_markets[market_name])
+	assert(market_def.currency)
 	
-	market_def.currency_symbol = minetest.formspec_escape(market_def.currency_symbol) or "¤" -- \u{00A4} -- defaults to the generic currency symbol ("scarab")
-	market_def.description = minetest.formspec_escape(market_def.description) or "Market"
-	market_def.long_description = minetest.formspec_escape(market_def.long_description) or "A market where orders to buy or sell items can be placed and fulfilled."
+	market_def.currency_symbol = market_def.currency_symbol or "¤" -- \u{00A4} -- defaults to the generic currency symbol ("scarab")
+	market_def.description = market_def.description or S("Market")
+	market_def.long_description = market_def.long_description or S("A market where orders to buy or sell items can be placed and fulfilled.")
 	
 	-- Reprocess currency table into a form easier for the withdraw code to work with
 	market_def.currency_ordered = {}
@@ -479,6 +516,14 @@ commoditymarket.register_market = function(market_name, market_def)
 	end
 	table.sort(market_def.currency_ordered, function(currency1, currency2) return currency1.amount > currency2.amount end)
 	
+	make_doc_entry(market_name, market_def) -- market_def has now been normalized, make documentation for it if doc is installed.
+	
+	-- Just in case a developer supplied strings that don't work well in formspecs, escape them now so we don't have to do it
+	-- wherever they're used.
+	market_def.currency_symbol = minetest.formspec_escape(market_def.currency_symbol)
+	market_def.description = minetest.formspec_escape(market_def.description)
+	market_def.long_description = minetest.formspec_escape(market_def.long_description)
+
 	local new_market = {}
 	new_market.def = market_def
 	commoditymarket.registered_markets[market_name] = new_market

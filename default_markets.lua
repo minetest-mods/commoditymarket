@@ -5,7 +5,20 @@ if not default_modpath then return end
 local MP = minetest.get_modpath(minetest.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
-local gold_coins_required = false
+-- Only register gold coins once, if required
+local gold_coins_registered = false
+local register_gold_coins = function()
+	if not gold_coins_registered then
+		minetest.register_craftitem("commoditymarket:gold_coins", {
+			description = S("Gold Coins"),
+			_doc_items_longdesc = S("A gold ingot is far too valuable to use as a basic unit of value, so it has become common practice to divide the standard gold bar into one thousand small disks to make trade easier."),
+			_doc_items_usagehelp = S("Gold coins can be deposited and withdrawn from markets that accept them as currency. These markets can make change if you have a thousand coins and would like them back in ingot form again."),
+			inventory_image = "commoditymarket_gold_coins.png",
+			stack_max = 1000,
+		})
+		gold_coins_registered = true		
+	end
+end
 
 local default_items = {"default:axe_bronze","default:axe_diamond","default:axe_mese","default:axe_steel","default:axe_steel","default:axe_stone","default:axe_wood","default:pick_bronze","default:pick_diamond","default:pick_mese","default:pick_steel","default:pick_stone","default:pick_wood","default:shovel_bronze","default:shovel_diamond","default:shovel_mese","default:shovel_steel","default:shovel_stone","default:shovel_wood","default:sword_bronze","default:sword_diamond","default:sword_mese","default:sword_steel","default:sword_stone","default:sword_wood", "default:blueberries", "default:book", "default:bronze_ingot", "default:clay_brick", "default:clay_lump", "default:coal_lump", "default:copper_ingot", "default:copper_lump", "default:diamond", "default:flint", "default:gold_ingot", "default:gold_lump", "default:iron_lump", "default:mese_crystal", "default:mese_crystal_fragment", "default:obsidian_shard", "default:paper", "default:steel_ingot", "default:stick", "default:tin_ingot", "default:tin_lump", "default:acacia_tree", "default:acacia_wood", "default:apple", "default:aspen_tree", "default:aspen_wood", "default:blueberry_bush_sapling", "default:bookshelf", "default:brick", "default:bronzeblock", "default:bush_sapling", "default:cactus", "default:clay", "default:coalblock", "default:cobble", "default:copperblock", "default:desert_cobble", "default:desert_sand", "default:desert_sandstone", "default:desert_sandstone_block", "default:desert_sandstone_brick", "default:desert_stone", "default:desert_stone_block", "default:desert_stonebrick", "default:diamondblock", "default:dirt", "default:glass", "default:goldblock", "default:gravel", "default:ice", "default:junglegrass", "default:junglesapling", "default:jungletree", "default:junglewood", "default:ladder_steel", "default:ladder_wood", "default:large_cactus_seedling", "default:mese", "default:mese_post_light", "default:meselamp", "default:mossycobble", "default:obsidian", "default:obsidian_block", "default:obsidian_glass", "default:obsidianbrick", "default:papyrus", "default:pine_sapling", "default:pine_tree", "default:pine_wood", "default:sand", "default:sandstone", "default:sandstone_block", "default:sandstonebrick", "default:sapling", "default:silver_sand", "default:silver_sandstone", "default:silver_sandstone_block", "default:silver_sandstone_brick", "default:snow", "default:snowblock", "default:steelblock", "default:stone", "default:stone_block", "default:stonebrick", "default:tinblock", "default:tree", "default:wood",}
 
@@ -35,7 +48,7 @@ local kings_def = {
 	initial_items = default_items,
 }
 
-gold_coins_required = true
+register_gold_coins()
 
 commoditymarket.register_market("kings", kings_def)
 
@@ -89,7 +102,7 @@ local night_def = {
 	anonymous = true,
 }
 
-gold_coins_required = true
+register_gold_coins()
 
 commoditymarket.register_market("night", night_def)
 
@@ -146,7 +159,7 @@ local caravan_def = {
 	initial_items = default_items,
 }
 
-gold_coins_required = true
+register_gold_coins()
 
 minetest.register_craft({
 	output = "commoditymarket:caravan_post",
@@ -513,13 +526,3 @@ minetest.register_node("commoditymarket:under_market", {
 })
 end
 ------------------------------------------------------------------
-
-if gold_coins_required then
-minetest.register_craftitem("commoditymarket:gold_coins", {
-	description = S("Gold Coins"),
-	_doc_items_longdesc = S("A gold ingot is far too valuable to use as a basic unit of value, so it has become common practice to divide the standard gold bar into one thousand small disks to make trade easier."),
-	_doc_items_usagehelp = S("Gold coins can be deposited and withdrawn from markets that accept them as currency. These markets can make change if you have a thousand coins and would like them back in ingot form again."),
-	inventory_image = "commoditymarket_gold_coins.png",
-	stack_max = 1000,
-})
-end
