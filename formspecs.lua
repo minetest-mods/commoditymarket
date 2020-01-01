@@ -12,15 +12,17 @@ local get_icon = function(item)
 			returnstring = inventory_image
 		else
 			local tiles = def.tiles
-			local tilecount = #tiles
-			-- Textures of node; +Y, -Y, +X, -X, +Z, -Z
-			local selected_tile = tiles[math.min(5,tilecount)]
-			if type(selected_tile) == "string" then
-				returnstring = selected_tile
-			else
-				local tile_name = selected_tile.name
-				if tile_name then
-					returnstring = tile_name
+			if tiles then
+				local tilecount = #tiles
+				-- Textures of node; +Y, -Y, +X, -X, +Z, -Z
+				local selected_tile = tiles[math.min(5,tilecount)]
+				if type(selected_tile) == "string" then
+					returnstring = selected_tile
+				else
+					local tile_name = selected_tile.name
+					if tile_name then
+						returnstring = tile_name
+					end
 				end
 			end
 		end
