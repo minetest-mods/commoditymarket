@@ -383,7 +383,7 @@ end
 minetest.register_chatcommand("market.removeitem", {
 	params = "marketname item",
 	privs = {server=true},
-	decription = "remove item from market. All existing buys and sells will be cancelled.",
+	decription = "remove item from market. All existing buys and sells will be canceled.",
 	func = function(name, param)
 		local params = param:split(" ")
 		if #params ~= 2 then
@@ -400,17 +400,19 @@ minetest.register_chatcommand("market.removeitem", {
 minetest.register_chatcommand("market.purge_unknowns", {
 	params = "",
 	privs = {server=true},
-	decription = "removes all unknown items from all markets. All existing buys and sells for those items will be cancelled.",
+	decription = "removes all unknown items from all markets. All existing buys and sells for those items will be canceled.",
 	func = function(name, param)
 		for market_name, market in pairs(commoditymarket.registered_markets) do
 			local items_to_remove = {}
 			local items_to_move = {}
 			for item, orders in pairs(market.orders_for_items) do
-				if minetest.registered_items[item] == nil then
+				local icon = commoditymarket.get_icon(item)
+				if icon == "unknown_item.png" then
 					table.insert(items_to_remove, item)
 				end
 			end
 			for _, item in ipairs(items_to_remove) do
+				minetest.chat_send_player(name, "Purging item: " .. tostring(item) .. " from market: " .. market_name)
 				remove_market_item(market, item)
 			end
 		end

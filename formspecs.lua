@@ -36,6 +36,8 @@ local get_icon = function(item)
 
 	return returnstring
 end
+-- Exposed so that the purge_unknowns command can use it.
+commoditymarket.get_icon = get_icon
 
 local get_item_description = function(item)
 	local def = minetest.registered_items[item]
