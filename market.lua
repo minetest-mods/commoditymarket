@@ -412,7 +412,8 @@ minetest.register_chatcommand("market.purge_unknowns", {
 				end
 			end
 			for _, item in ipairs(items_to_remove) do
-				minetest.chat_send_player(name, "Purging item: " .. tostring(item) .. " from market: " .. market_name)
+				minetest.chat_send_player(name, S("Purging item: @1 from market: @2", tostring(item), market_name))
+				minetest.log("warning", "[commoditymarket] Purging unknown item: " .. tostring(item) .. " from market: " .. market_name)
 				remove_market_item(market, item)
 			end
 		end
