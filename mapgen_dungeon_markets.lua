@@ -1,12 +1,12 @@
 local goblin_enabled = minetest.settings:get_bool("commoditymarket_enable_goblin_market")
 local under_enabled = minetest.settings:get_bool("commoditymarket_enable_under_market")
-local goblin_prob = minetest.settings:get("commoditymarket_goblin_market_dungeon_prob") or 0.25
-local under_prob = minetest.settings:get("commoditymarket_under_market_dungeon_prob") or 0.1
+local goblin_prob = tonumber(minetest.settings:get("commoditymarket_goblin_market_dungeon_prob")) or 0.25
+local under_prob = tonumber(minetest.settings:get("commoditymarket_under_market_dungeon_prob")) or 0.1
 
-local goblin_max = minetest.settings:get("commoditymarket_goblin_market_dungeon_max") or -100
-local goblin_min = minetest.settings:get("commoditymarket_goblin_market_dungeon_min") or -300
-local under_max = minetest.settings:get("commoditymarket_under_market_dungeon_max") or -500
-local under_min = minetest.settings:get("commoditymarket_under_market_dungeon_min") or -31000
+local goblin_max = tonumber(minetest.settings:get("commoditymarket_goblin_market_dungeon_max")) or 100
+local goblin_min = tonumber(minetest.settings:get("commoditymarket_goblin_market_dungeon_min")) or -400
+local under_max = tonumber(minetest.settings:get("commoditymarket_under_market_dungeon_max")) or -500
+local under_min = tonumber(minetest.settings:get("commoditymarket_under_market_dungeon_min")) or -31000
 
 local bad_goblin_range = goblin_min >= goblin_max
 local bad_under_range = under_min >= under_max

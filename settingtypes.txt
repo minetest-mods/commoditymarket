@@ -14,8 +14,8 @@ commoditymarket_protect_under_market (Protect Undermarket node) bool true
 
 [Dungeon market generation]
 commoditymarket_goblin_market_dungeon_prob (Goblin market probability per dungeon mapblock) float 0.25 0 1
-commoditymarket_goblin_market_dungeon_max (Upper y limit of goblin markets) int -100
-commoditymarket_goblin_market_dungeon_min (Lower y limit of goblin markets) int -300
+commoditymarket_goblin_market_dungeon_max (Upper y limit of goblin markets) int 100
+commoditymarket_goblin_market_dungeon_min (Lower y limit of goblin markets) int -400
 commoditymarket_under_market_dungeon_prob (Undermarket probability per dungeon mapblock) float 0.1 0 1
 commoditymarket_under_market_dungeon_max (Upper y limit of undermarkets) int -500
 commoditymarket_under_market_dungeon_min (Lower y limit of undermarkets) int -31000
