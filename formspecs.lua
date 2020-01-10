@@ -2,32 +2,53 @@
 local MP = minetest.get_modpath(minetest.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
+
+--[inventorycube{<top>{<left>{<right>
+--Escaping does not apply here and `^` is replaced by `&` in texture names instead.
+--Example:
+--    [inventorycube{grass.png{dirt.png&grass_side.png{dirt.png&grass_side.png
+--Creates an inventorycube with `grass.png`, `dirt.png^grass_side.png` and `dirt.png^grass_side.png` textures
+local process_inventory_cube = function(texture_string)
+	if not texture_string:sub(1,14) == "[inventorycube" then
+		return texture_string
+	end
+	local split = texture_string:split("{")
+	local left = split[3] -- the "front" of the cube we're seeing in the inventory list
+	if left == nil then -- in case something weird happens, don't crash.
+		return texture_string
+	end
+	left = left:gsub("&", "^")
+	return left
+end
+
 local get_icon = function(item)
 	local def = minetest.registered_items[item]
 	local returnstring = "unknown_item.png"
+	if def == nil then
+		return returnstring
+	end
 
-	if def then
-		local inventory_image = def.inventory_image
-		if inventory_image and inventory_image ~= "" then
-			returnstring = inventory_image
-		else
-			local tiles = def.tiles
-			if tiles then
-				local tilecount = #tiles
-				-- Textures of node; +Y, -Y, +X, -X, +Z, -Z
-				local selected_tile = tiles[math.min(5,tilecount)]
-				if type(selected_tile) == "string" then
-					returnstring = selected_tile
-				else
-					local tile_name = selected_tile.name
-					if tile_name then
-						returnstring = tile_name
-					end
+	local inventory_image = def.inventory_image
+	if inventory_image and inventory_image ~= "" then
+		returnstring = inventory_image
+	else
+		local tiles = def.tiles
+		if tiles then
+			local tilecount = #tiles
+			-- Textures of node; +Y, -Y, +X, -X, +Z, -Z
+			local selected_tile = tiles[math.min(5,tilecount)]
+			if type(selected_tile) == "string" then
+				returnstring = selected_tile
+			else
+				local tile_name = selected_tile.name
+				if tile_name then
+					returnstring = tile_name
 				end
 			end
 		end
 	end
-	
+	returnstring = process_inventory_cube(returnstring)
+
 	-- Formspec tables can't handle image compositing and modifiers
 	local found_caret = returnstring:find("%^")
 	if found_caret then
