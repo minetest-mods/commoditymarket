@@ -55,7 +55,7 @@ local get_icon = function(item)
 		returnstring = returnstring:sub(1, found_caret-1)
 	end
 
-	return returnstring
+	return minetest.formspec_escape(returnstring)
 end
 -- Exposed so that the purge_unknowns command can use it.
 commoditymarket.get_icon = get_icon

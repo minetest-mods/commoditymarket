@@ -363,6 +363,19 @@ local cancel_buy = function(market, item, order)
 	minetest.sound_play({name = "commoditymarket_register_closed", gain = 0.1}, {to_player=account.name})
 end
 
+local initialize_market_item = function(orders_for_items, item)
+	if orders_for_items[item] == nil then
+		local lists = {}
+		lists.buy_orders = {}
+		lists.sell_orders = {}
+		lists.buy_volume = 0
+		lists.sell_volume = 0
+		lists.item = item
+		-- leave last_price nil to indicate it's never been sold before
+		orders_for_items[item] = lists
+	end
+end
+
 -----------------------------------------------------------------------------------------------------------
 
 local remove_market_item = function(market, item)
@@ -383,14 +396,16 @@ end
 minetest.register_chatcommand("market.removeitem", {
 	params = "marketname item",
 	privs = {server=true},
-	decription = "remove item from market. All existing buys and sells will be canceled.",
+	description = S("remove item from market. All existing buys and sells will be canceled."),
 	func = function(name, param)
 		local params = param:split(" ")
 		if #params ~= 2 then
+			minetest.chat_send_player(name, "Incorrect parameter count")
 			return
 		end
 		local market = commoditymarket.registered_markets[params[1]]
 		if market == nil then
+			minetest.chat_send_player(name, "No such market: " .. params[1])
 			return
 		end
 		remove_market_item(market, params[2])
@@ -400,7 +415,7 @@ minetest.register_chatcommand("market.removeitem", {
 minetest.register_chatcommand("market.purge_unknowns", {
 	params = "",
 	privs = {server=true},
-	decription = "removes all unknown items from all markets. All existing buys and sells for those items will be canceled.",
+	description = S("removes all unknown items from all markets. All existing buys and sells for those items will be canceled."),
 	func = function(name, param)
 		for market_name, market in pairs(commoditymarket.registered_markets) do
 			local items_to_remove = {}
@@ -420,20 +435,32 @@ minetest.register_chatcommand("market.purge_unknowns", {
 	end,
 })
 
------------------------------------------------------------------------------------------------------------
-
-local initialize_market_item = function(orders_for_items, item)
-	if orders_for_items[item] == nil then
-		local lists = {}
-		lists.buy_orders = {}
-		lists.sell_orders = {}
-		lists.buy_volume = 0
-		lists.sell_volume = 0
-		lists.item = item
-		-- leave last_price nil to indicate it's never been sold before
-		orders_for_items[item] = lists
-	end
+-- Used during development and debugging to find items that break the market formspecs when added
+local debugging_commands = false
+if debugging_commands then
+	minetest.register_chatcommand("market.addeverything", {
+		params = "marketname",
+		privs = {server=true},
+		description = S("Add all registered items to the provided market"),
+		func = function(name, param)
+			local params = param:split(" ")
+			if #params ~= 1 then
+				minetest.chat_send_player(name, "Incorrect parameter count")
+				return
+			end
+			local market = commoditymarket.registered_markets[params[1]]
+			if market == nil then
+				minetest.chat_send_player(name, "No such market: " .. params[1])
+				return
+			end
+			for item_name, def in pairs(minetest.registered_items) do
+				initialize_market_item(market.orders_for_items, item_name)
+			end			
+		end,
+	})
 end
+
+-----------------------------------------------------------------------------------------------------------
 
 -- API exposed to the outside world
 local add_inventory = function(self, player_name, item, quantity)

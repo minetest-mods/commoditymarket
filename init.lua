@@ -8,10 +8,15 @@ dofile(MP.."/doc.lua")
 dofile(MP.."/default_markets.lua")
 dofile(MP.."/mapgen_dungeon_markets.lua")
 
+
+-- internationalization boilerplate
+local MP = minetest.get_modpath(minetest.get_current_modname())
+local S, NS = dofile(MP.."/intllib.lua")
+
 minetest.register_chatcommand("market.show", {
 	params = "marketname",
 	privs = {server=true},
-	decription = "show market formspec",
+	description = S("show market formspec"),
 	func = function(name, param)
 		local market = commoditymarket.registered_markets[param]
 		if market == nil then return end
@@ -23,7 +28,7 @@ minetest.register_chatcommand("market.show", {
 minetest.register_chatcommand("market.list", {
 	params = "",
 	privs = {server=true},
-	decription = "list all registered markets",
+	description = S("list all registered markets"),
 	func = function(name, param)
 		local list = {}
 		for marketname, def in pairs(commoditymarket.registered_markets) do
