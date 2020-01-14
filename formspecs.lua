@@ -3,6 +3,8 @@ local MP = minetest.get_modpath(minetest.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
 
+-- See https://github.com/minetest/minetest/issues/9300 for a feature request that would simplify and improve icon generation, if supported.
+
 --[inventorycube{<top>{<left>{<right>
 --Escaping does not apply here and `^` is replaced by `&` in texture names instead.
 --Example:
@@ -139,10 +141,10 @@ local get_account_formspec = function(market, account)
 			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
 	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market_def.currency_symbol .. account.balance .. "]"
+		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."field[6.1,0.325;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
 		.."button[6.7,0;1.2,1;withdraw;"..S("Withdraw").."]"
-		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."container_end[]"
 		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
