@@ -2,8 +2,19 @@
 local MP = minetest.get_modpath(minetest.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
-
+-- Large textures can screw with the formspecs.
 -- See https://github.com/minetest/minetest/issues/9300 for a feature request that would simplify and improve icon generation, if supported.
+-- In the meantime, here's some methods for overriding item icons to manually work around this:
+local override_item_icon = {}
+commoditymarket.override_item_icon = function(item_name, new_icon_texture)
+	override_item_icon[item_name] = new_icon_texture
+end
+local override_image_icon = {}
+commoditymarket.override_image_icon = function(old_icon_texture, new_icon_texture)
+	override_image_icon[old_icon_texture] = new_icon_texture
+end
+-- And a setting for disabling icons entirely:
+local global_enable_item_icons = minetest.settings:get_bool("commoditymarket_enable_item_icons", true)
 
 --[inventorycube{<top>{<left>{<right>
 --Escaping does not apply here and `^` is replaced by `&` in texture names instead.
@@ -28,6 +39,11 @@ local get_icon = function(item)
 	local returnstring = "unknown_item.png"
 	if def == nil then
 		return returnstring
+	end
+	
+	local override = override_item_icon[item]
+	if override then
+		return override
 	end
 
 	local inventory_image = def.inventory_image
@@ -56,6 +72,11 @@ local get_icon = function(item)
 	if found_caret then
 		returnstring = returnstring:sub(1, found_caret-1)
 	end
+	
+	override = override_image_icon[returnstring]
+	if override then
+		return override
+	end
 
 	return minetest.formspec_escape(returnstring)
 end
@@ -78,12 +99,16 @@ local inventory_desc_comp = function(invitem1, invitem2) return invitem1.descrip
 
 local get_account_formspec = function(market, account)
 	local show_itemnames = account.show_itemnames == "true"
+	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
 	local market_def = market.def
 
 	local inventory = {}
 	local inventory_count = 0
 	for item, quantity in pairs(account.inventory) do
-		local icon = get_icon(item)
+		local icon
+		if show_icons then
+			icon = get_icon(item)
+		end
 		table.insert(inventory, {item=item, quantity=quantity, icon=icon, description=get_item_description(item)})
 		inventory_count = inventory_count + quantity
 	end
@@ -97,34 +122,50 @@ local get_account_formspec = function(market, account)
 		"size[10,10]"
 		.."tabheader[0,0;tabs;"..market_def.description..","..S("Your Inventory")..","..S("Market Orders")..";2;false;true]"
 	}
-	formspec[#formspec+1] = "tablecolumns[image"
-	for i=1, #inventory, 2 do
-		formspec[#formspec+1] = ","..i.."="..inventory[i].icon
+	formspec[#formspec+1] = "tablecolumns["
+	
+	if show_icons then
+		formspec[#formspec+1] = "image"
+		for i=1, #inventory, 2 do
+			formspec[#formspec+1] = ","..i.."="..inventory[i].icon
+		end
+		formspec[#formspec+1] = ";"
 	end
 	if show_itemnames then
-		formspec[#formspec+1] = ";text"
+		formspec[#formspec+1] = "text;"
 	end
-	formspec[#formspec+1] = ";text;text,align=center;image"
-	for i=2, #inventory, 2 do
-		formspec[#formspec+1] = ","..i.."="..inventory[i].icon
+	formspec[#formspec+1] = "text;text,align=center"
+	if show_icons then
+		formspec[#formspec+1] = ";image"
+		for i=2, #inventory, 2 do
+			formspec[#formspec+1] = ","..i.."="..inventory[i].icon
+		end
 	end
 	if show_itemnames then
 		formspec[#formspec+1] = ";text"
 	end
 	formspec[#formspec+1] = ";text;text,align=center]"
 		.."tooltip[inventory;"..S("All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.").."]"
-		.."table[0,0;9.75,4;inventory;0"
+		.."table[0,0;9.75,4;inventory;"
+	if show_icons then
+		formspec[#formspec+1] = "0,"
+	end
 	if show_itemnames then
-		formspec[#formspec+1] = ","..S("Item")
+		formspec[#formspec+1] = S("Item")..","
 	end	
-	formspec[#formspec+1] = ","..S("Description")..","..S("Quantity")..",0"
+	formspec[#formspec+1] = S("Description")..","..S("Quantity")
+	if show_icons then
+		formspec[#formspec+1] = ",0"
+	end
 	if show_itemnames then
 		formspec[#formspec+1] = ","..S("Item")
 	end	
 	formspec[#formspec+1] = ","..S("Description")..","..S("Quantity")
 
 	for i, entry in ipairs(inventory) do
-		formspec[#formspec+1] = "," .. i
+		if show_icons then
+			formspec[#formspec+1] = "," .. i
+		end
 		if show_itemnames then
 			formspec[#formspec+1] = "," .. entry.item
 		end	
@@ -148,6 +189,7 @@ local get_account_formspec = function(market, account)
 		.."container_end[]"
 		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
+		
 	return table.concat(formspec)
 end
 
@@ -174,25 +216,37 @@ end
 local compare_last_price = function(mkt1, mkt2) return (mkt1.last_price or 2^31) < (mkt2.last_price or 2^31) end
 
 local sort_marketlist = function(item_list, account)
+	-- I think tonumber is now redundant here, leaving it in in case upgrading a world that has text recorded in this field for an existing player account
+	local sort_by = tonumber(account.sort_markets_by_column)
+	if sort_by == nil then return end
 	local show_itemnames = account.show_itemnames == "true"
-	local sort_by = tonumber(account.sort_markets_by_column) or -1
-	if show_itemnames then sort_by = sort_by - 1 end -- displace columns 1 if itemnames are enabled
+	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
+
+	local icon_displace = 0
+	if show_icons then
+		icon_displace = 1
+	end
+	local itemname_displace = 0
+	if show_itemnames then
+		itemname_displace = 1
+	end
+
 	--	"Icon,Item,Description,#00FF00,Buy Vol,Buy Max,#FF0000,Sell Vol,Sell Min,Last Price"
-	if sort_by == 1 and show_itemnames then
+	if sort_by == 1 + icon_displace and show_itemnames then
 		table.sort(item_list, compare_market_item)
-	elseif sort_by == 2 then
+	elseif sort_by == 1 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_market_desc)
-	elseif sort_by == 4 then
+	elseif sort_by == 3 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_buy_volume)
-	elseif sort_by == 5 then
+	elseif sort_by == 4 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_buy_max)
-	elseif sort_by == 7 then
+	elseif sort_by == 6 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_sell_volume)
-	elseif sort_by == 8 then
+	elseif sort_by == 7 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_sell_min)
-	elseif sort_by == 9 then
+	elseif sort_by == 8 + icon_displace + itemname_displace then
 		table.sort(item_list, compare_last_price)
-	elseif sort_by == 10 then
+	elseif sort_by == 9 + icon_displace + itemname_displace then
 		table.sort(item_list, function(mkt1, mkt2)
 			-- Define locally so that account is available
 			return (account.inventory[mkt1.item] or 0) > (account.inventory[mkt2.item] or 0)
@@ -224,7 +278,7 @@ local make_marketlist = function(market, account)
 				if found then
 					table.insert(market_list, row)
 				end
-			else	
+			else
 				table.insert(market_list, row)
 			end
 		end
@@ -245,20 +299,23 @@ local get_market_formspec = function(market, account)
 	local selected = account.selected
 	local market_list = make_marketlist(market, account)
 	local show_itemnames = account.show_itemnames == "true"
+	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
 	local anonymous = market_def.anonymous
 
 	local formspec = {
 		"size[10,10]"
 		.."tabheader[0,0;tabs;"..market_def.description..","..S("Your Inventory")..","..S("Market Orders")..";3;false;true]"
-		.."tablecolumns[image" -- icon
 	}
-	
+
 	-- column definitions
-	for i, row in ipairs(market_list) do
-		formspec[#formspec+1] = "," .. i .. "=" .. get_icon(row.item)
-	end
-	formspec[#formspec+1] = ";"
-	if show_itemnames then
+	formspec[#formspec+1] = "tablecolumns["
+	if show_icons then
+		formspec[#formspec+1] = "image" -- icon
+		for i, row in ipairs(market_list) do
+			formspec[#formspec+1] = "," .. i .. "=" .. get_icon(row.item)
+		end
+		formspec[#formspec+1] = ";"
+	end	if show_itemnames then
 		formspec[#formspec+1] = "text;" -- itemname
 	end
 	formspec[#formspec+1] = "text;" -- description
@@ -271,25 +328,28 @@ local get_market_formspec = function(market, account)
 		.."text,align=right,tooltip="..S("Price paid for one of these the last time one was sold.")..";"
 		.."text,align=right,tooltip="..S("Quantity of this item that you have in your inventory ready to sell.").."]"
 		.."table[0,0;9.75,5;summary;"
-		.."0"-- icon
+	if show_icons then
+		formspec[#formspec+1] = "0,"-- icon
+	end
 
 	-- header row
 	if show_itemnames then
-		formspec[#formspec+1] = ",Item" -- itemname
+		formspec[#formspec+1] = "Item," -- itemname
 	end
-	formspec[#formspec+1] = ","..S("Description")..",#00FF00,"..S("Buy Vol")..","..S("Buy Max")
+	formspec[#formspec+1] = S("Description")..",#00FF00,"..S("Buy Vol")..","..S("Buy Max")
 		..",#FF0000,"..S("Sell Vol")..","..S("Sell Min")..","..S("Last Price")..","..S("Inventory")
 
 	local selected_idx
 	local selected_row
-	
+
 	local truncate_length
 	-- If we're not showing item names we can be more generous in allowed description length
 	if show_itemnames then truncate_length = truncate_item_names_to else truncate_length = truncate_item_names_to * 2 end
-	
 	-- Show list of item market summaries
 	for i, row in ipairs(market_list) do
-		formspec[#formspec+1] = ","..i -- icon
+		if show_icons then
+			formspec[#formspec+1] = ","..i -- icon
+		end
 
 		if show_itemnames then
 			local item_display = row.item
@@ -298,7 +358,7 @@ local get_market_formspec = function(market, account)
 			end
 			formspec[#formspec+1] = "," .. item_display
 		end
-		
+
 		local def = minetest.registered_items[row.item] or {description = S("Unknown Item")}
 		local desc_display = minetest.formspec_escape(def.description:gsub("\n", " "))
 		if desc_display:len() > truncate_length then
@@ -313,7 +373,7 @@ local get_market_formspec = function(market, account)
 		.. "," .. ((row.sell_orders[#row.sell_orders] or {}).price or "-")
 		.. "," .. (row.last_price or "-")
 		.. "," .. (account.inventory[row.item] or "-")
-		
+
 		-- we happen to be processing the row that matches the item this player has selected. Record that.
 		if selected == row.item then
 			selected_row = row
@@ -323,7 +383,7 @@ local get_market_formspec = function(market, account)
 	end
 	-- a row that's visible is marked as the selected item, so make it selected in the formspec
 	if selected_row then
-		formspec[#formspec+1] = ";"..selected_idx 
+		formspec[#formspec+1] = ";"..selected_idx
 	end
 	formspec[#formspec+1] = "]"
 
@@ -342,7 +402,7 @@ local get_market_formspec = function(market, account)
 	-- if a visible item market is selected, show the orders for it in detail
 	if selected_row then
 		local current_time = minetest.get_gametime()
-		
+
 		local desc_display
 		if show_itemnames then
 			desc_display = selected
@@ -382,7 +442,6 @@ local get_market_formspec = function(market, account)
 			.."text,align=right,tooltip="..S("The total amount of items available at this price accounting for the other orders also currently being offered.")..";"
 			.."text,tooltip="..S("The name of the player who placed this order.\nDouble-click your own orders to cancel them.")..";"
 			.."text,align=right,tooltip="..S("How many days ago this order was placed.").."]"
-		
 			.."table[0,6.5;9.75,3.5;orders;#FFFFFF,"..S("Order")..","..S("Price")..","..S("Quantity")..","..S("Total Volume")..","..S("Player")..","..S("Days Old")
 
 		local sell_volume = selected_row.sell_volume
@@ -413,6 +472,7 @@ local get_market_formspec = function(market, account)
 	else
 		formspec[#formspec+1] = "label[0.1,5.1;"..S("Select an item to view or place orders.").."]"
 	end
+
 	return table.concat(formspec)
 end
 
@@ -442,7 +502,6 @@ local log_to_string = function(market, log_entry, account)
 	else
 		seller_name = seller.name
 	end
-	
 	local colour
 	local new
 	local last_acknowledged = account.last_acknowledged or 0
@@ -453,7 +512,6 @@ local log_to_string = function(market, log_entry, account)
 		colour = "#FFFFFF"
 		new = false
 	end
-	
 	local show_itemnames = account.show_itemnames == "true"
 	local itemname = log_entry.item
 	if not show_itemnames then
@@ -493,12 +551,16 @@ local get_info_formspec = function(market, account)
 	else
 		formspec[#formspec+1] = "#CCCCCC"..S("No logged activites in this market yet.").."]"
 	end
-	
 	local show_itemnames = account.show_itemnames or "false"
 
 	formspec[#formspec+1] = "]container[0.5, 7.5]label[0,0;Settings:]checkbox[0,0.25;show_itemnames;"..S("Show Itemnames")..";"
-		..show_itemnames.."]container_end[]"
-	
+		..show_itemnames.."]"
+	if global_enable_item_icons then
+		local show_icons = account.show_icons or "true"	
+		formspec[#formspec+1] = "checkbox[2,0.25;show_icons;"..S("Show Icons")..";"..show_icons.."]"
+	end		
+	formspec[#formspec+1] = "container_end[]"
+
 	return table.concat(formspec)
 end
 
@@ -540,7 +602,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname_split[1] ~= "commoditymarket" then
 		return false
 	end
-	
 	local market = commoditymarket.registered_markets[formname_split[2]]
 	if not market then
 		return false
@@ -552,20 +613,23 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	local account = market:get_account(name)
+	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
+
 	local something_changed = false
-	
 	if fields.tabs then
 		account.tab = tonumber(fields.tabs)
 		something_changed = true
 	end
-	
 	-- player clicked on an item in the market summary table
 	if fields.summary then
 		local summaryevent = minetest.explode_table_event(fields.summary)
 		if summaryevent.type == "DCL" or summaryevent.type == "CHG" then
 			if summaryevent.row == 1 then
 				-- header clicked, sort by column
-				account.sort_markets_by_column = summaryevent.column 
+				local column = tonumber(summaryevent.column)
+				if not (column == 1 and show_icons) then -- ignore clicks on the icon column header
+					account.sort_markets_by_column = column
+				end
 			else
 				-- item clicked, recreate the list to find out which one
 				local marketlist = make_marketlist(market, account)
@@ -579,7 +643,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		something_changed = true
 	end
-	
 	if fields.orders then
 		local ordersevent = minetest.explode_table_event(fields.orders)
 		if ordersevent.type == "DCL" and ordersevent.column > 0 then
@@ -588,7 +651,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local sell_orders = selected_row.sell_orders
 			local sell_order_count = #sell_orders
 			local selected_order
-			if selected_idx <= sell_order_count then -- if the index is within the range of sell orders, 
+			if selected_idx <= sell_order_count then -- if the index is within the range of sell orders,
 				selected_order = sell_orders[selected_idx]
 				if selected_order and selected_order.account == account then -- and the order belongs to the current player,
 					market:cancel_sell(account.selected, selected_order) -- cancel it
@@ -624,16 +687,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 	end
 
-	-- player clicked in their inventory table, may need to give him his stuff back 
+	-- player clicked in their inventory table, may need to give him his stuff back
 	if fields.inventory then
 		local invevent = minetest.explode_table_event(fields.inventory)
 		if invevent.type == "DCL" and invevent.column > 0 then
-			local col_count
+			local col_count = 8
 			local show_itemnames = account.show_itemnames == "true"
-			if show_itemnames then
-				col_count = 8
-			else
-				col_count = 6
+			if not show_itemnames then
+				col_count = col_count - 2
+			end
+			if not show_icons then
+				col_count = col_count - 2
 			end
 			local index = math.floor(((invevent.row-1)*col_count + invevent.column - 1)/(col_count/2)) - 1
 			local account = market:get_account(name)
@@ -664,22 +728,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.withdraw or fields.key_enter_field == "withdrawamount" then
 		local withdrawvalue = tonumber(fields.withdrawamount)
-		if withdrawvalue then 
+		if withdrawvalue then
 			local account = market:get_account(name)
 			withdrawvalue = math.min(withdrawvalue, account.balance)
 			for _, currency in ipairs(market.def.currency_ordered) do
 				this_unit_amount = math.floor(withdrawvalue/currency.amount)
 				if this_unit_amount > 0 then
 					local remaining = add_to_player_inventory(name, currency.item, this_unit_amount)
-					local value_given = (this_unit_amount - remaining) * currency.amount					
+					local value_given = (this_unit_amount - remaining) * currency.amount
 					account.balance = account.balance - value_given
 					withdrawvalue = withdrawvalue - value_given
 					something_changed = true
-				end			
+				end
 			end
 		end
 	end
-	
+
 	if fields.search_filter then
 		local value = string.lower(fields.search_filter)
 		if account.search ~= value then
@@ -698,21 +762,21 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if process_checkbox("filter_participating", fields, account) then something_changed = true end
 	if process_checkbox("show_itemnames", fields, account) then something_changed = true end
-	
+	if process_checkbox("show_icons", fields, account) then something_changed = true end
+
 	if fields.acknowledge_log then
 		account.last_acknowledged = minetest.get_gametime()
 		something_changed = true
 	end
-	
+
 	if fields.apply_search or fields.key_enter_field == "search_filter" then
 		something_changed = true
 	end
-	
+
 	if fields.clear_search then
 		account.search = ""
 		something_changed = true
 	end
-	
 	if something_changed then
 		minetest.show_formspec(name, formname, market:get_formspec(account))
 	end
