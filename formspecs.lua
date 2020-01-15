@@ -2,6 +2,8 @@
 local MP = minetest.get_modpath(minetest.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
+local truncate_item_names_to = 30
+
 -- Large textures can screw with the formspecs.
 -- See https://github.com/minetest/minetest/issues/9300 for a feature request that would simplify and improve icon generation, if supported.
 -- In the meantime, here's some methods for overriding item icons to manually work around this:
@@ -83,10 +85,21 @@ end
 -- Exposed so that the purge_unknowns command can use it.
 commoditymarket.get_icon = get_icon
 
+
+local truncate_string = function(target, length)
+	if target:len() > length then
+		return target:sub(1,length-2).."..."
+	end
+	return target
+end
+
 local get_item_description = function(item)
 	local def = minetest.registered_items[item]
 	if def then
-		return minetest.formspec_escape(def.description:gsub("\n", " "))
+		local description = def.description
+		if description then
+			return minetest.formspec_escape(description:gsub("\n", " "))
+		end
 	end
 	return S("Unknown Item")
 end
@@ -167,7 +180,7 @@ local get_account_formspec = function(market, account)
 			formspec[#formspec+1] = "," .. i
 		end
 		if show_itemnames then
-			formspec[#formspec+1] = "," .. entry.item
+			formspec[#formspec+1] = "," .. truncate_string(entry.item, truncate_item_names_to)
 		end	
 		-- no need to formspec_escape description here, it gets done when it's initially added to the inventory table
 		formspec[#formspec+1] = "," .. entry.description .. "," .. entry.quantity
@@ -197,23 +210,27 @@ end
 -- Market formspec
 --------------------------------------------------------------------------------------------------------
 
-local truncate_item_names_to = 30
-
-local compare_market_item = function(mkt1, mkt2) return mkt1.item < mkt2.item end
-local compare_market_desc = function(mkt1, mkt2)
-	local def1 = minetest.registered_items[mkt1.item] or {}
-	local def2 = minetest.registered_items[mkt2.item] or {}
-	return (def1.description or S("Unknown Item")) < (def2.description or S("Unknown Item"))
+local compare_market_item = function(mkt1, mkt2)
+	return mkt1.item < mkt2.item
 end
-local compare_buy_volume = function(mkt1, mkt2) return mkt1.buy_volume > mkt2.buy_volume end
+local compare_market_desc = function(mkt1, mkt2)
+	return get_item_description(mkt1.item) < get_item_description(mkt2.item)
+end
+local compare_buy_volume = function(mkt1, mkt2)
+	return mkt1.buy_volume > mkt2.buy_volume
+end
 local compare_buy_max = function(mkt1, mkt2)
 	return ((mkt1.buy_orders[#mkt1.buy_orders] or {}).price or -2^30) > ((mkt2.buy_orders[#mkt2.buy_orders] or {}).price or -2^30)
 end
-local compare_sell_volume = function(mkt1, mkt2) return mkt1.sell_volume > mkt2.sell_volume end
+local compare_sell_volume = function(mkt1, mkt2)
+	return mkt1.sell_volume > mkt2.sell_volume
+end
 local compare_sell_min = function(mkt1, mkt2)
 	return ((mkt1.sell_orders[#mkt1.sell_orders] or {}).price or 2^31) < ((mkt2.sell_orders[#mkt2.sell_orders] or {}).price or 2^31)
 end
-local compare_last_price = function(mkt1, mkt2) return (mkt1.last_price or 2^31) < (mkt2.last_price or 2^31) end
+local compare_last_price = function(mkt1, mkt2)
+	return (mkt1.last_price or 2^31) < (mkt2.last_price or 2^31)
+end
 
 local sort_marketlist = function(item_list, account)
 	-- I think tonumber is now redundant here, leaving it in in case upgrading a world that has text recorded in this field for an existing player account
@@ -342,9 +359,6 @@ local get_market_formspec = function(market, account)
 	local selected_idx
 	local selected_row
 
-	local truncate_length
-	-- If we're not showing item names we can be more generous in allowed description length
-	if show_itemnames then truncate_length = truncate_item_names_to else truncate_length = truncate_item_names_to * 2 end
 	-- Show list of item market summaries
 	for i, row in ipairs(market_list) do
 		if show_icons then
@@ -352,19 +366,10 @@ local get_market_formspec = function(market, account)
 		end
 
 		if show_itemnames then
-			local item_display = row.item
-			if item_display:len() > truncate_length then
-				item_display = item_display:sub(1,truncate_length-2).."..."
-			end
-			formspec[#formspec+1] = "," .. item_display
+			formspec[#formspec+1] = "," .. truncate_string(row.item, truncate_item_names_to)
 		end
 
-		local def = minetest.registered_items[row.item] or {description = S("Unknown Item")}
-		local desc_display = minetest.formspec_escape(def.description:gsub("\n", " "))
-		if desc_display:len() > truncate_length then
-			desc_display = desc_display:sub(1,truncate_length-2).."..."
-		end
-		formspec[#formspec+1] = "," .. desc_display
+		formspec[#formspec+1] = "," .. get_item_description(row.item)
 		.. ",#00FF00,"
 		.. row.buy_volume
 		.. "," .. ((row.buy_orders[#row.buy_orders] or {}).price or "-")
@@ -701,6 +706,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			local index = math.floor(((invevent.row-1)*col_count + invevent.column - 1)/(col_count/2)) - 1
 			local account = market:get_account(name)
+			-- build a local copy of the inventory that would be displayed in the formspec so we can 
+			-- figure out what item the index we were given is pointing to
 			local inventory = {}
 			for item, quantity in pairs(account.inventory) do
 				table.insert(inventory, {item=item, quantity=quantity, description=get_item_description(item)})
