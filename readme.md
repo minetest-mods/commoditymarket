@@ -8,11 +8,11 @@ The basic market interface is the same across all markets and market types, but 
 
 Each market has one or more "currency" items defined that are treated differently from the other items that can be bought and sold there. Currency items are translated into a player's currency balance rather than being bought and sold directly.
 
-For example, the default market offered by this mod has this currency definition:
+For example, some of the markets offered by the "commoditymarket_fantasy" mod have this currency definition:
 	
 	{
 		["default:gold_ingot"] = 1000,
-		["commoditymarket:gold_coin"] = 1
+		["commoditymarket_fantasy:gold_coin"] = 1
 	}
 	
 When a gold ingot is added to the player's market account it turns into 1000 units of currency. When a gold coin is added it turns into 1 unit of currency. You can't buy and sell gold directly in this market, it is instead the "standard" by which the value of other items is measured.
@@ -53,13 +53,15 @@ Double-click on your order in the orders list to cancel it.
 
 This mod has several commands that a server administrator can use:
 
-* market.removeitem marketname item -- cancels all existing buy and sell orders for an item and removes its entry from the market tab. This is useful if you've changed what items are permitted in a particular market and need to clear out items that are no longer allowed.
-* market.show marketname -- opens the market's formspec
-* market.list -- lists the marketnames of all registered markets
+* `market.removeitem marketname item` -- cancels all existing buy and sell orders for an item and removes its entry from the market tab. This is useful if you've changed what items are permitted in a particular market and need to clear out items that are no longer allowed.
+* `market.show marketname` -- opens the market's formspec
+* `market.list` -- lists the marketnames of all registered markets
+* `market.purge_unknowns` -- executes "removeitem" for all markets on all items that don't have a definition. Useful for clearing out items that are no longer defined due to a mod being updated or removed.
+* `market.addeverything marketname` - Adds all registered items to a market's listings. NOTE: this is intended as a debugging tool, not for use in a live server, as it doesn't filter out items that a player cannot actually harvest in-world.
 
 ## Registering a market
 
-The file "default_markets.lua" contains a number of pre-defined markets that provide examples of what's possible with this mod. They can be enabled as-is with game settings and include:
+The mod "[commoditymarket_fantasy](https://github.com/FaceDeer/commoditymarket_fantasy)" contains a number of pre-defined markets that provide examples of what's possible with this mod. They include:
 
 * King's Market - a basic sort of "commoner's marketplace", only open during the day
 * Night Market - the shadier side of commerce, only open during the night
@@ -67,7 +69,7 @@ The file "default_markets.lua" contains a number of pre-defined markets that pro
 * Goblin Exchange - a strange marketplace that uses coal as a currency
 * Undermarket - where dark powers make their trades, using Mese as a currency
 
-All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators, they don't have crafting recipes. Modifying these markets or creating your own from scratch should hopefully be a fairly straightforward task.
+All of these except for the Trader's Caravan are intended to be placed in specific locations by server administrators or mapgen, they don't have crafting recipes. Modifying these markets or creating your own from scratch should hopefully be a fairly straightforward task.
 
 ### Market definition API
 
