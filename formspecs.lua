@@ -1,6 +1,4 @@
--- internationalization boilerplate
-local MP = minetest.get_modpath(minetest.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = minetest.get_translator(minetest.get_current_modname())
 
 local truncate_item_names_to = 30
 
@@ -563,7 +561,7 @@ local get_info_formspec = function(market, account)
 			"tooltip[acknowledge_log;"..S("Log entries in yellow are new since last time you marked your log as read.").."]"
 		end
 	else
-		formspec[#formspec+1] = "#CCCCCC"..S("No logged activites in this market yet.").."]"
+		formspec[#formspec+1] = "#CCCCCC"..S("No logged activities in this market yet.").."]"
 	end
 	local show_itemnames = account.show_itemnames or "false"
 

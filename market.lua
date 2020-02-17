@@ -1,6 +1,4 @@
--- internationalization boilerplate
-local MP = minetest.get_modpath(minetest.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = minetest.get_translator(minetest.get_current_modname())
 
 commoditymarket.registered_markets = {}
 local log_length_limit = 30
@@ -382,7 +380,7 @@ end
 minetest.register_chatcommand("market.show", {
 	params = "marketname",
 	privs = {server=true},
-	description = S("show market formspec"),
+	description = S("show market interface"),
 	func = function(name, param)
 		local market = commoditymarket.registered_markets[param]
 		if market == nil then return end
