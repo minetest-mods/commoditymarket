@@ -208,19 +208,11 @@ end
 -- Market formspec
 --------------------------------------------------------------------------------------------------------
 
--- I hate that I need this function
-local ESCAPE_CHAR = string.char(0x1b)
-local strip_localization_markup = function(localized)
-
-end
-
 local compare_market_item = function(mkt1, mkt2)
 	return mkt1.item < mkt2.item
 end
 local compare_market_desc = function(mkt1, mkt2)
-	-- Strip localization escape characters for sorting.
-	-- This means it will only sort correctly in English, but what else can I do?
-	-- Otherwise sorting is broken in *all* languages.
+	-- TODO: see https://github.com/minetest/minetest/issues/8398 for sorting localized strings
 	return get_item_description(mkt1.item) < get_item_description(mkt2.item)
 end
 local compare_buy_volume = function(mkt1, mkt2)
