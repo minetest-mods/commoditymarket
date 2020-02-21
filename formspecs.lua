@@ -192,7 +192,7 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = "label[3,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
 			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
-	formspec[#formspec+1] = "label[4.9,0;Balance:\n" .. market_def.currency_symbol .. account.balance .. "]"
+	formspec[#formspec+1] = "label[4.9,0;"..S("Balance:") .. "\n" .. market_def.currency_symbol .. account.balance .. "]"
 		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."field[6.1,0.325;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
