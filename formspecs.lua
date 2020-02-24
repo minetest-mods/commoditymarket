@@ -525,9 +525,10 @@ local log_to_string = function(market, log_entry, account)
 		end
 	end
 
-	return colour .. S("On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @6@8.",
+	local currency_symbol = market.def.currency_symbol
+	return colour .. S("On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.",
 			math.ceil(log_entry.timestamp/86400), seller_name, log_entry.quantity, itemname,
-			purchaser_name, market.def.currency_symbol, log_entry.price, log_entry.quantity*log_entry.price), new
+			purchaser_name, currency_symbol, log_entry.price, currency_symbol, log_entry.quantity*log_entry.price), new
 end
 
 
