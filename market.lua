@@ -526,7 +526,8 @@ if minetest.get_modpath("doc") then
 		local currencies = {}
 		for _, currency_item in ipairs(market_def.currency_ordered) do
 			local item_def = minetest.registered_items[currency_item.item]
-			assert(item_def, "Failed to find item definition for " .. currency_item.item)
+			assert(item_def, "Failed to find item definition for currency item " .. currency_item.item
+				.. ". Make sure the item has been registered before registering a market that references it as currency.")
 			table.insert(currencies, S("1 @1 = @2@3", item_def.description, market_def.currency_symbol, currency_item.amount))
 		end
 		local inventory_limit
