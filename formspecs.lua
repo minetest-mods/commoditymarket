@@ -1,5 +1,10 @@
 local S = minetest.get_translator(minetest.get_current_modname())
 
+local mcl_formspec_itemslots
+if mcl_formspec then
+	mcl_formspec_itemslots = mcl_formspec.get_itemslot_bg
+end
+
 local truncate_item_names_to = 30
 
 -- Large textures can screw with the formspecs.
@@ -187,7 +192,11 @@ local get_account_formspec = function(market, account)
 	formspec[#formspec+1] = "]container[1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
 		.."label[1,0;"..S("Drop items here to\nadd to your account").."]"
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
-		
+	
+	if mcl_formspec_itemslots then
+		formspec[#formspec+1] = mcl_formspec_itemslots(0,0,1,1)
+	end	
+	
 	if market_def.inventory_limit then
 		formspec[#formspec+1] = "label[3,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
 			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
@@ -199,7 +208,13 @@ local get_account_formspec = function(market, account)
 		.."button[6.7,0;1.2,1;withdraw;"..S("Withdraw").."]"
 		.."container_end[]"
 		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
-		.."list[current_player;main;0,1.25;8,3;8]container_end[]"
+		.."list[current_player;main;0,1.25;8,3;8]"
+		
+	if mcl_formspec_itemslots then
+		formspec[#formspec+1] = mcl_formspec_itemslots(0,0,8,1) .. mcl_formspec_itemslots(0,1.25,8,3)
+	end	
+		
+	formspec[#formspec+1] =	"container_end[]"
 		
 	return table.concat(formspec)
 end
