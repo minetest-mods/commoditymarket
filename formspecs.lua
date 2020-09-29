@@ -117,6 +117,12 @@ local get_account_formspec = function(market, account)
 	local show_itemnames = account.show_itemnames == "true"
 	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
 	local market_def = market.def
+	
+	if account.inventory_item_selected and not account.inventory[account.inventory_item_selected] then
+		-- This can happen if a player has put an item up for sale that he had previously selected in this screen,
+		-- thus emptying his inventory of it.
+		account.inventory_item_selected = nil
+	end
 
 	local inventory = {}
 	local inventory_count = 0
@@ -189,8 +195,15 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = "," .. entry.description .. "," .. entry.quantity
 	end	
 	
-	formspec[#formspec+1] = "]container[1,4.5]list[detached:commoditymarket:" .. market.name .. ";add;0,0;1,1;]"
-		.."label[1,0;"..S("Drop items here to\nadd to your account").."]"
+	formspec[#formspec+1] = "]container[0.5,4.5]"
+	
+	if account.inventory_item_selected then
+		formspec[#formspec+1] = "button[0,0;1.2,1;retrieveitem;"..S("Retrieve:") .."]"
+			.."label[0,0.75;"..get_item_description(account.inventory_item_selected).."]"
+	end
+	
+	formspec[#formspec+1] = "list[detached:commoditymarket:" .. market.name .. ";add;1.2,0;1,1;]"
+		.."label[2.2,0;"..S("Drop items here to\nadd to your account").."]"
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
 	
 	if mcl_formspec_itemslots then
@@ -198,14 +211,14 @@ local get_account_formspec = function(market, account)
 	end	
 	
 	if market_def.inventory_limit then
-		formspec[#formspec+1] = "label[3,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
-			.. "tooltip[3,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
+		formspec[#formspec+1] = "label[4.2,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
+			.. "tooltip[4.2,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
-	formspec[#formspec+1] = "label[4.9,0;"..S("Balance:") .. "\n" .. market_def.currency_symbol .. account.balance .. "]"
-		.."tooltip[4.9,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
-		.."field[6.1,0.325;1,1;withdrawamount;;]"
+	formspec[#formspec+1] = "label[6.1,0;"..S("Balance:") .. "\n" .. market_def.currency_symbol .. account.balance .. "]"
+		.."tooltip[6.1,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
+		.."field[7.3,0.325;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
-		.."button[6.7,0;1.2,1;withdraw;"..S("Withdraw").."]"
+		.."button[7.9,0;1.2,1;withdraw;"..S("Withdraw").."]"
 		.."container_end[]"
 		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
 		.."list[current_player;main;0,1.25;8,3;8]"
@@ -616,6 +629,21 @@ local add_to_player_inventory = function(name, item, amount)
 	return amount
 end
 
+local give_back_item = function(name, item, account)
+	local amount = account.inventory[item]
+	local remaining = add_to_player_inventory(name, item, amount)
+	if remaining == 0 then
+		account.inventory[item] = nil
+		account.inventory_item_selected = nil
+	else
+		account.inventory[item] = remaining
+	end
+	if remaining ~= amount then
+		return true
+	end
+	return false
+end
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local formname_split = formname:split(":")
 
@@ -710,7 +738,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	-- player clicked in their inventory table, may need to give him his stuff back
 	if fields.inventory then
 		local invevent = minetest.explode_table_event(fields.inventory)
-		if invevent.type == "DCL" and invevent.column > 0 then
+		local invevent_type = invevent.type
+		if invevent_type == "INV" then
+			-- no row selected
+			if account.inventory_item_selected then
+				account.inventory_item_selected = nil
+				something_changed = true
+			end
+		elseif invevent.column > 0 then
+			-- Find the item that was clicked on
 			local col_count = 8
 			local show_itemnames = account.show_itemnames == "true"
 			if not show_itemnames then
@@ -734,18 +770,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			if inventory[index] then
 				local item = inventory[index].item
-				local amount = account.inventory[item]
-				local remaining = add_to_player_inventory(name, item, amount)
-				if remaining == 0 then
-					account.inventory[item] = nil
-				else
-					account.inventory[item] = remaining
-				end
-				if remaining ~= amount then
+				if account.inventory_item_selected ~= item then
+					-- update selected item
+					account.inventory_item_selected = item
 					something_changed = true
+				end
+				if invevent_type == "DCL" then
+					-- double-click, give the item back immediately
+					something_changed = something_changed or give_back_item(name, item, account)
 				end
 			end
 		end
+	end
+	
+	if fields.retrieveitem and account.inventory_item_selected then
+		local account = market:get_account(name)
+		something_changed = give_back_item(name, account.inventory_item_selected, account)
 	end
 
 	if fields.withdraw or fields.key_enter_field == "withdrawamount" then
