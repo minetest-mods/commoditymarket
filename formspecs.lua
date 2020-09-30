@@ -96,13 +96,23 @@ local truncate_string = function(target, length)
 	return target
 end
 
-local get_item_description = function(item)
+local get_translated_string = minetest.get_translated_string
+local lang_code = nil -- it's ugly using this to pass the language code into this function, but it's efficient and works well for the sort functions.
+local get_item_description = function(item)	
 	local def = minetest.registered_items[item]
 	if def then
 		local description = def.description
 		if description then
+			-- added in https://github.com/minetest/minetest/pull/9733
+			-- Eventually this check can be removed, for now gives a little backward compatibility
+			if get_translated_string then
+				description = get_translated_string(lang_code, description)
+			end
 			return minetest.formspec_escape(description:gsub("\n", " "))
 		end
+	end
+	if get_translated_string then
+		return get_translated_string(lang_code, S("Unknown Item"))
 	end
 	return S("Unknown Item")
 end
@@ -240,7 +250,6 @@ local compare_market_item = function(mkt1, mkt2)
 	return mkt1.item < mkt2.item
 end
 local compare_market_desc = function(mkt1, mkt2)
-	-- TODO: see https://github.com/minetest/minetest/issues/8398 for sorting localized strings
 	return get_item_description(mkt1.item) < get_item_description(mkt2.item)
 end
 local compare_buy_volume = function(mkt1, mkt2)
@@ -601,6 +610,7 @@ end
 
 commoditymarket.get_formspec = function(market, account)
 	local tab = account.tab
+	lang_code = minetest.get_player_information(account.name).lang_code
 	if tab == 1 then
 		return get_info_formspec(market, account)
 	elseif tab == 2 then
@@ -760,6 +770,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			-- build a local copy of the inventory that would be displayed in the formspec so we can 
 			-- figure out what item the index we were given is pointing to
 			local inventory = {}
+			lang_code = minetest.get_player_information(account.name).lang_code -- needed by get_item_description
 			for item, quantity in pairs(account.inventory) do
 				table.insert(inventory, {item=item, quantity=quantity, description=get_item_description(item)})
 			end
