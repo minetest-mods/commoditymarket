@@ -81,7 +81,7 @@ Number of items available for sale in the market.=Numero de artículos en venta 
 Number of items there's demand for in the market.=Numero de artículos que reciben demandas en el mercado.
 
 #transaction log entry. @1 is a day number, @2 is a player name, @3 is a quantity of items, @4 is the item name, @5 is a player name, @6 is a currency symbol, @7 is a number (price), @8 is  the currency symbol again and @9 is a number (price)
-On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.=El día @1 @ 2 vendido @3 @ 4 a @5 a @6@7 cada uno para un total de @8@9
+On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.=El día @1 @2 vendido @3 @4 a @5 a @6@7 cada uno para un total de @8@9
 
 Order=Orden
 Player=Jugador
