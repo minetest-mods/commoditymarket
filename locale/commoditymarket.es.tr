@@ -1,0 +1,176 @@
+# textdomain: commoditymarket
+
+
+### doc.lua ###
+
+#long-form description of how markets work, for documentation
+At the core of how a market operates are "buy" and "sell" orders. A buy order is an announcement to the world that you are interested in purchasing a certain quantity of item and are willing to pay a certain amount of currency in exchange for each unit of that item. Conversely, a sell order is an announcement to the world that you are interested in selling a certain quantity of item and will accept a certain amount of currency in exchange for each unit of that item.@n@nThe market price of an item is determined by where the existing buy and sell orders for that item intersect. When you offer to buy an item for a price that someone is offering to sell it at, the item is transferred to you and currency is transferred from your account to theirs to cover the cost.The market will keep track of the most recent price that an item was successfully sold for, but note that this information is for historical interest only - there's no guarantee that anyone is currently willing to match the historical price.@n@nWhen an item is selected in the upper list, the currently existing buy and sell orders for that item will be displayed in the lower list.Sell orders are listed first in descending price, followed by buy orders in ascending price. The current market price will be somewhere in between the lowest sell order and the highest buy order. If you wish to cancel a buy or sell order that you've placed for an item, double-click on the order and the item or currency that you put into that order will be returned to your inventory.@n@nIf you place a buy order and there are already sell orders for the item that meet or are below your price, some or all of your buy order might be immediately fulfilled. Your purchases will be made at the price that the sell orders have been set to - if you were willing to pay 15 units of currency per item but someone was already offering to sell for 2 units of currency per item, you only pay 2 units for each of that offer's items.If there aren't enough compatible sell orders to fulfill your buy order, the remainder will be placed into the market and made available for future sellers to see and fulfill if they agree to your price. Your buy order will immediately deduct the currency required for it from your account's balance, but if you cancel your order you will get that currency back - it's not gone until the order is actually fulfilled.@n@nIf you place a sell order and there are already buy orders that meet or exceed your price, some or all of your sell order may be immediately fulfilled. You'll be paid the price that the buyers are offering rather than the amount you're demanding. If any of your sell offer is left unfulfilled, the sell order will be added to the market for future buyers to see. The items for this offer will be immediately taken from your market inventory but if you cancel your order you will get those items back.=En el centro del funcionamiento de un mercado se encuentran las órdenes de "compra" y "venta". Una orden de compra es un anuncio al mundo de que estás interesado en comprar una cierta cantidad de artículo y estás dispuesto a pagar una cierta cantidad de dinero a cambio de cada unidad de ese artículo.Por el contrario, una orden de venta es un anuncio al mundo de que está interesado en vender una cierta cantidad de artículo y aceptará una cierta cantidad de moneda a cambio de cada unidad de ese artículo.@n@nEl precio de mercado de un artículo está determinado por el lugar donde se cruzan las órdenes de compra y venta existentes para ese artículo. Cuando ofreces comprar un artículo por un precio al que alguien está ofreciendo venderlo, el artículo se transfiere a ti y la moneda se transfiere de tu cuenta a la de ellos para cubrir el costo.El mercado realizará un seguimiento del precio más reciente por el que se vendió un artículo con éxito, pero tenga en cuenta que esta información es solo para interés histórico; no hay garantía de que alguien esté actualmente dispuesto a igualar el precio histórico. @n@nCuando un artículo es seleccionado en la lista superior, las órdenes de compra y venta actualmente existentes para ese artículo se mostrarán en la lista inferior.Las órdenes de venta se enumeran primero en precio descendente, seguidas de las órdenes de compra en precio ascendente. El precio de mercado actual estará entre la orden de venta más baja y la orden de compra más alta. Si desea cancelar una orden de compra o venta que haya realizado para un artículo, haga doble clic en el pedido y el artículo o la moneda que colocó en ese pedido se devolverá a su inventario.@n@nSi realiza una orden de compra y ya hay órdenes de venta para el artículo que cumplen o están por debajo de su precio, es posible que una parte o la totalidad de su orden de compra se cumpla de inmediato. Sus compras se realizarán al precio que se establecieron las órdenes de venta: si estaba dispuesto a pagar 15 unidades de moneda por artículo, pero alguien ya estaba ofreciendo vender por 2 unidades de moneda por artículo, solo paga 2 unidades por cada uno de los artículos de esa oferta.Si no hay suficientes órdenes de venta compatibles para cumplir con su orden de compra, el resto se colocará en el mercado y estará disponible para que los futuros vendedores las vean y cumplan si están de acuerdo con su precio. Su orden de compra deducirá inmediatamente la moneda requerida para ello del saldo de su cuenta, pero si cancela su pedido, recuperará esa moneda; no se perderá hasta que el pedido se haya completado realmente.@n@nSi realiza una orden de venta y ya hay órdenes de compra que cumplen o superan su precio, es posible que una parte o la totalidad de su orden de venta se cumpla de inmediato. Se le pagará el precio que ofrecen los compradores en lugar de la cantidad que usted exige. Si alguna de sus ofertas de venta no se cumple, la orden de venta se agregará al mercado para que los futuros compradores la vean. Los artículos de esta oferta se retirarán inmediatamente de su inventario de mercado, pero si cancela su pedido, los recuperará.
+
+#documentation tab text
+Commodity Markets=Commodity Markets
+
+#long-form description of how markets work, for documentation
+Each player's account has an inventory that serves as a holding area for items that are destined to be sold or that have been bought by the player but not yet retrieved. This inventory is a bit different from the standard Minetest inventory in that it doesn't hold item "stacks", it just tracks the total number of that item present. Some markets allow for extremely large quantities of an item to be stored here for sale.@n@nTo add an item to your market inventory for eventual sale either shift-click on the item in your player inventory or drag the item stack to the inventory slot below the main market inventory list. Some markets may have restrictions on what items can be bought and sold, if an item is not valid for that market it won't go into the market's inventory. Some items are considered "currency" and will add to your account's currency balance instead of being listed in your market inventory.@n@nTools cannot be added to the market inventory if they have any wear on them. The market also can't handle items with attached metadata such as books that have had text added to them.@n@nTo remove an item from your market inventory, double-click in it in the market inventory list. As much of the item as can fit into your player inventory will be transferred to you, with any remainder staying behind in the market inventory. To withdraw currency from your market balance type the amount you'd like to withdraw in the field next to the "Withdraw" button. The currency will be converted into items and added to your player inventory, with whatever cannot be converted remaining behind in your market balance.=La cuenta de cada jugador tiene un inventario que sirve como área de almacenamiento para los artículos que están destinados a ser vendidos o que han sido comprados por el jugador pero que aún no se han recuperado. Este inventario es un poco diferente del inventario estándar de Minetest en que no contiene "pilas" de elementos, solo rastrea el número total de ese elemento presente. Algunos mercados permiten almacenar aquí cantidades extremadamente grandes de un artículo para la venta. @n@nPara agregar un artículo a su inventario de mercado para una venta eventual, haga clic en el artículo en su inventario de jugador o arrastre la pila de artículos al inventario ranura debajo de la lista de inventario del mercado principal. Algunos mercados pueden tener restricciones sobre qué artículos se pueden comprar y vender, si un artículo no es válido para ese mercado, no entrará en el inventario del mercado. Algunos artículos se consideran "moneda" y se agregarán al saldo de moneda de su cuenta en lugar de aparecer en su inventario de mercado. @n@nTools no se pueden agregar al inventario de mercado si tienen algún desgaste. El mercado tampoco puede manejar artículos con metadatos adjuntos, como libros a los que se les ha agregado texto. @n@nPara eliminar un artículo de su inventario de mercado, haga doble clic en él en la lista de inventario de mercado. Se te transferirá la mayor parte del artículo que pueda caber en tu inventario de jugador, y el resto se quedará en el inventario del mercado. Para retirar moneda de su saldo de mercado, escriba la cantidad que desea retirar en el campo junto al botón "Retirar". La moneda se convertirá en artículos y se agregará a su inventario de jugador, y lo que no se pueda convertir quedará atrás en su saldo de mercado.
+
+#documentation category description
+Game-wide marketplaces where goods can be bought and sold at prices of your choice.=Mercados de todo el juego donde se pueden comprar y vender productos a los precios que elijas.
+
+#title of documentation page
+User Interface: Inventory=Interfaz de Usuario: Inventario
+#title of documentation page
+User Interface: Orders=Interfaz de Usuario: Ordenes
+
+### formspecs.lua ###
+
+#tooltip
+All the items you've transfered to the market to sell and the items you've@npurchased with buy orders. Double-click on an item to bring it back into your@npersonal inventory.=Todos los artículos que ha transferido al mercado para vender y los artículos que han@ncomprado con órdenes de compra. Haz doble clic en un artículo para traerlo de vuelta a tu inventario personal.
+
+#tooltip
+Apply search to outputs.=Aplicar la búsqueda a las salidas.
+Balance:=Saldo:
+#label
+#button label
+Buy=Comprar
+#table column header
+Buy Max=Maximo de compra
+#table column header
+Buy Vol=Volumen de compra
+#tooltip
+Clear search.=Limpiar busquedas
+Days Old=Antigüedad
+#table column header
+Description=Descripción
+Description:=Descripción
+#label for inventory drop target. The hard return is needed to fit it into the UI
+Drop items here to@nadd to your account=Suelta objetos aqui@npara añadir a tu cuenta
+#tooltip
+Enter substring to search item identifiers for.=Introduzca la subcadena para buscar los identificadores de elementos.
+
+#tooltip
+Enter the amount of currency you'd like to withdraw then click the 'Withdraw'@nbutton to convert it into items and transfer it to your personal inventory.=Ingrese la cantidad de moneda que desea retirar y luego haga clic en el botón 'Retirar' @n para convertirla en artículos y transferirla a su inventario personal.
+
+How many days ago this order was placed.=Cuantos dias lleva esta orden colocada
+#label
+In inventory:=En inventario:
+#table column header
+Inventory=Inventario
+#label
+Inventory limit:=Limite de inventario
+#table column header
+Item=Objeto
+#table column header
+Last Price=Ultimo precio
+
+#tooltip
+Log entries in yellow are new since last time you marked your log as read.=Las entradas de registro en amarillo son nuevas desde la última vez que marcó su registro como leído.
+
+Mark logs as read= Marcar entradas de registro como leido.
+#tab label
+Market Orders=Ordenes de mercado
+#tooltip
+Maximum price being offered to buy one of these.=Precio maximo de este objeto.
+#tooltip
+Minimum price being demanded to sell one of these.=Precio minimo de este objeto.
+#checkbox label
+My orders=Mis ordenes
+#shown if there are no transactions the player has participated in to list in the log
+No logged activities in this market yet.=No hay actividad registrada en este mercado aun.
+#tooltip
+Number of items available for sale in the market.=Numero de artículos en venta disponibles en el mercado.
+#tooltip
+Number of items there's demand for in the market.=Numero de artículos que reciben demandas en el mercado.
+
+#transaction log entry. @1 is a day number, @2 is a player name, @3 is a quantity of items, @4 is the item name, @5 is a player name, @6 is a currency symbol, @7 is a number (price), @8 is  the currency symbol again and @9 is a number (price)
+On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.=El día @1 @2 vendido @3 @4 a @5 a @6@7 cada uno para un total de @8@9
+
+Order=Orden
+Player=Jugador
+Price=Precio
+#tooltip
+Price paid for one of these the last time one was sold.=Precio pagado por uno de estos la última vez que se vendió.
+Price per=Precio por
+#table column header, field label
+Quantity=Cantidad
+
+#tooltip
+Quantity of this item that you have in your inventory ready to sell.=Artículos que tienes en tu inventario listos para vender.
+
+Select an item to view or place orders.=Selecciona un objeto para ver o colocar ordenes.
+
+#tooltip
+Select this to show only the markets where you have either a buy or a sell order pending.=Selecciona para solo mostrar los mercados donde tienes ordenes pendientes.
+
+Sell=Vender
+#table column header
+Sell Min=Precio minimo de venta
+#table column header
+Sell Vol=Volumen de venta.
+Sell limit:=Limite de venta.
+#checkbox label
+Show Icons=Mostrar iconos
+#checkbox label
+Show Itemnames=Mostrar nombres de artículos
+
+The name of the player who placed this order.@nDouble-click your own orders to cancel them.=Nombre del jugador que ha colocado esta orden.@nDoble click para cancelar tu propia orden.
+
+The price per item in this order.=Precio por objeto en esta orden.
+
+The total amount of items available at this price accounting for the other orders also currently being offered.=El número total de artículos disponibles a este precio representa los otros pedidos que también se ofrecen actualmente.
+
+The total amount of items in this particular order.=El total de artículos en esta orden específica.
+
+#tooltip
+This market limits the total number of items a given seller can have for sale at a time.@You have @1 items remaining. Cancel old sell orders to free up space.=Este mercado limita la cantidad total de artículos que un vendedor determinado puede tener a la venta a la vez. @nTe quedan @1 artículos. Cancele las órdenes de venta antiguas para liberar espacio.
+
+Total Volume=Volumén total
+#undefined item
+Unknown Item=Unknown Item
+
+#tooltip
+Use these fields to enter buy and sell orders for the selected item.=Utilice estos campos para ingresar órdenes de compra y venta para el artículo seleccionado.
+
+#button label
+Withdraw=Retirar
+
+#tooltip
+You can still receive purchased items if you've exceeded your inventory limit,@nbut you won't be able to transfer items from your personal inventory into@nthe market until you've emptied it back down below the limit again.=Aún puede recibir artículos comprados si ha excedido su límite de inventario, @npero no podrá transferir artículos de su inventario personal al @nel mercado hasta que lo haya vaciado nuevamente por debajo del límite.
+
+#tab label
+Your Inventory=Tu inventario
+Your Recent Purchases and Sales:=Tus ultimas compra ventas.
+someone=Alguien mas
+you=Tu
+yourself=Tu mismo
+
+### market.lua ###
+
+1 @1 @= @2@3=1 @1 @= @2@3=1 @1 @=
+
+A market where orders to buy or sell items can be placed and fulfilled.=Un mercado donde se pueden realizar y cumplir pedidos para comprar o vender artículos.
+
+Add all registered items to the provided market=Añadir todos los artículos registrados al mercado
+Currency item values:=Valores de las monedas.
+Market=Mercado
+Market has unlimited inventory space.=El mercado tiene espacio ilimitado
+Market inventory is limited to @1 items.=El inventario del mercado esta limitado por @1 artículos.
+Market supports unlimited pending sell orders.=El mercado admite órdenes de venta pendientes ilimitadas.
+Purging item: @1 from market: @2=Elemento de purga: @1 Desde el mercado:@2
+Total pending sell orders are limited to @1 items.=Todas las ordenes de venta pendientes estan limitadas por @1 artículos.
+You can't afford that many of this item.=No puedes pagar tanto de este objeto.
+You can't pay less than nothing for an item.=No puedes pagar menos que nada por un objeto.
+You can't sell fewer than one item.=No puedes vender menos de un objeto.
+You can't sell items for a negative price.=No puedes vender artículos por un precio negativo.
+
+You don't have enough of that item in your inventory to post this sell order.=No tienes suficiente de ese objeto en su inventario para publicar esta orden de venta.
+
+You have to buy at least one item.=Tienes que comprar almenos un objeto.
+
+You have too many items listed for sale in this market, please cancel some sell orders to make room for new ones.=Tienes demasiado artículos a la venta en este mercado, cancele algunas órdenes de venta para dejar espacio para otras nuevas.
+
+list all registered markets=Lista de todos los mercados registrados
+
+remove item from market. All existing buys and sells will be canceled.=Eliminar artículo del mercado. Se cancelarán todas las compras y ventas existentes.
+
+removes all unknown items from all markets. All existing buys and sells for those items will be canceled.=Elimina todos los elementos desconocidos de todos los mercados. Se cancelarán todas las compras y ventas existentes de esos artículos.
+
+show market interface=Mostrar interfaz de mercado
