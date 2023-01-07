@@ -217,7 +217,7 @@ local get_account_formspec = function(market, account)
 		.."listring[current_player;main]listring[detached:commoditymarket:" .. market.name .. ";add]"
 	
 	if mcl_formspec_itemslots then
-		formspec[#formspec+1] = mcl_formspec_itemslots(0,0,1,1)
+		formspec[#formspec+1] = mcl_formspec_itemslots(1.2,0,1,1)
 	end	
 	
 	if market_def.inventory_limit then
