@@ -1,7 +1,7 @@
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local mcl_formspec_itemslots
-if mcl_formspec then
+if minetest.get_modpath("mcl_formspec") then
 	mcl_formspec_itemslots = mcl_formspec.get_itemslot_bg
 end
 
