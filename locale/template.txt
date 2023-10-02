@@ -22,8 +22,7 @@ User Interface: Orders=
 
 ### formspecs.lua ###
 
-#tooltip
-All the items you've transfered to the market to sell and the items you've@npurchased with buy orders. Double-click on an item to bring it back into your@npersonal inventory.=
+All the items you've transferred to the market to sell and the items you've@npurchased with buy orders. Double-click on an item to bring it back into your@npersonal inventory.=
 
 #tooltip
 Apply search to outputs.=
@@ -95,6 +94,7 @@ Quantity=
 #tooltip
 Quantity of this item that you have in your inventory ready to sell.=
 
+Retrieve:=
 Select an item to view or place orders.=
 
 #tooltip
@@ -169,8 +169,9 @@ You have too many items listed for sale in this market, please cancel some sell 
 
 list all registered markets=
 
-remove item from market. All existing buys and sells will be canceled.=
+remove item from market. All existing buys and sells will be cancelled.=
 
-removes all unknown items from all markets. All existing buys and sells for those items will be canceled.=
+removes all unknown items from all markets. All existing buys and sells for those items will be cancelled.=
 
 show market interface=
+

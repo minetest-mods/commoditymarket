@@ -177,7 +177,7 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = ";text"
 	end
 	formspec[#formspec+1] = ";text;text,align=center]"
-		.."tooltip[inventory;"..S("All the items you've transfered to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.").."]"
+		.."tooltip[inventory;"..S("All the items you've transferred to the market to sell and the items you've\npurchased with buy orders. Double-click on an item to bring it back into your\npersonal inventory.").."]"
 		.."table[0,0;9.75,4;inventory;"
 	if show_icons then
 		formspec[#formspec+1] = "0,"

@@ -421,7 +421,7 @@ end
 minetest.register_chatcommand("market.removeitem", {
 	params = "marketname item",
 	privs = {server=true},
-	description = S("remove item from market. All existing buys and sells will be canceled."),
+	description = S("remove item from market. All existing buys and sells will be cancelled."),
 	func = function(name, param)
 		local params = param:split(" ")
 		if #params ~= 2 then
@@ -440,7 +440,7 @@ minetest.register_chatcommand("market.removeitem", {
 minetest.register_chatcommand("market.purge_unknowns", {
 	params = "",
 	privs = {server=true},
-	description = S("removes all unknown items from all markets. All existing buys and sells for those items will be canceled."),
+	description = S("removes all unknown items from all markets. All existing buys and sells for those items will be cancelled."),
 	func = function(name, param)
 		for market_name, market in pairs(commoditymarket.registered_markets) do
 			local items_to_remove = {}

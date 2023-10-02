@@ -22,8 +22,7 @@ User Interface: Orders=Interface: Ordens
 
 ### formspecs.lua ###
 
-#tooltip
-All the items you've transfered to the market to sell and the items you've@npurchased with buy orders. Double-click on an item to bring it back into your@npersonal inventory.=Todos os itens que você transferiu para o inventário mercantil para vender e@nitens que você comprou no mercado. Clique duplo para retornar o item para seu@ninventario pessoal.
+All the items you've transferred to the market to sell and the items you've@npurchased with buy orders. Double-click on an item to bring it back into your@npersonal inventory.=Todos os itens que você transferiu para o inventário mercantil para vender e@nitens que você comprou no mercado. Clique duplo para retornar o item para seu@ninventario pessoal.
 
 #tooltip
 Apply search to outputs.=Pesquisar resultados
@@ -95,6 +94,7 @@ Quantity=Lotes
 #tooltip
 Quantity of this item that you have in your inventory ready to sell.=Quantidade desse item em seu inventario para ser vendido.
 
+Retrieve:=
 Select an item to view or place orders.=Clique para ver ordens.
 
 #tooltip
@@ -169,8 +169,8 @@ You have too many items listed for sale in this market, please cancel some sell 
 
 list all registered markets=lista todos os mercados registrados
 
-remove item from market. All existing buys and sells will be canceled.=remove o item do mercado. Todas as ordens de compra e venda existentes serão canceladas.
+remove item from market. All existing buys and sells will be cancelled.=remove o item do mercado. Todas as ordens de compra e venda existentes serão canceladas.
 
-removes all unknown items from all markets. All existing buys and sells for those items will be canceled.=remove todos os itens desconhecidos de todos os mercados. Todas as ordens de compra e venda existentes para esses itens serão canceladas.
+removes all unknown items from all markets. All existing buys and sells for those items will be cancelled.=remove todos os itens desconhecidos de todos os mercados. Todas as ordens de compra e venda existentes para esses itens serão canceladas.
 
 show market interface=mostra a interface do mercado
