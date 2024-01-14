@@ -110,6 +110,7 @@ Sell limit:=Venda limite:
 Show Icons=Ver icones
 #checkbox label
 Show Itemnames=Ver itens
+Settings=
 
 The name of the player who placed this order.@nDouble-click your own orders to cancel them.=Nome do jogador que colocou essa ordem.@nClique duplo para cancelar caso seja sua.
 
