@@ -1,8 +1,12 @@
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local mcl_formspec_itemslots
+local inventory_row_size = 8
 if minetest.get_modpath("mcl_formspec") then
 	mcl_formspec_itemslots = mcl_formspec.get_itemslot_bg
+end
+if minetest.get_modpath("mcl_core") then
+	inventory_row_size = 9 -- Mineclone2/a has a different inventory size than default
 end
 
 local truncate_item_names_to = 30
@@ -224,17 +228,22 @@ local get_account_formspec = function(market, account)
 		formspec[#formspec+1] = "label[4.2,0;"..S("Inventory limit:").."\n" .. inventory_count.."/" .. market_def.inventory_limit .. "]"
 			.. "tooltip[4.2,0;1.5,1;"..S("You can still receive purchased items if you've exceeded your inventory limit,\nbut you won't be able to transfer items from your personal inventory into\nthe market until you've emptied it back down below the limit again.").."]"
 	end
+
+	local x_start_inventory = 1 -- default for 8 slot per rows
+	if inventory_row_size == 9 then
+		x_start_inventory = 0.5
+	end
 	formspec[#formspec+1] = "label[6.1,0;"..S("Balance:") .. "\n" .. market_def.currency_symbol .. account.balance .. "]"
 		.."tooltip[6.1,0;3.5,1;"..S("Enter the amount of currency you'd like to withdraw then click the 'Withdraw'\nbutton to convert it into items and transfer it to your personal inventory.").."]"
 		.."field[7.3,0.325;1,1;withdrawamount;;]"
 		.."field_close_on_enter[withdrawamount;false]"
 		.."button[7.9,0;1.2,1;withdraw;"..S("Withdraw").."]"
 		.."container_end[]"
-		.."container[1,5.75]list[current_player;main;0,0;8,1;]"
-		.."list[current_player;main;0,1.25;8,3;8]"
+		.."container["..x_start_inventory..",5.75]list[current_player;main;0,0;"..inventory_row_size..",1;]"
+		.."list[current_player;main;0,1.25;"..inventory_row_size..",3;"..inventory_row_size.."]"
 		
 	if mcl_formspec_itemslots then
-		formspec[#formspec+1] = mcl_formspec_itemslots(0,0,8,1) .. mcl_formspec_itemslots(0,1.25,8,3)
+		formspec[#formspec+1] = mcl_formspec_itemslots(0,0,inventory_row_size,1) .. mcl_formspec_itemslots(0,1.25,inventory_row_size,3)
 	end	
 		
 	formspec[#formspec+1] =	"container_end[]"
