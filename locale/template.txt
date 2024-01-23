@@ -108,6 +108,7 @@ Sell Vol=
 Sell limit:=
 #checkbox label
 Show Icons=
+Show Description=
 #checkbox label
 Show Itemnames=
 Settings=
