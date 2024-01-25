@@ -128,7 +128,7 @@ local inventory_desc_comp = function(invitem1, invitem2) return invitem1.descrip
 
 local get_account_formspec = function(market, account)
 	local show_itemnames = account.show_itemnames == "true"
-	local show_description = account.show_description == "true"
+	local show_descriptions = account.show_descriptions == "true"
 	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
 	local market_def = market.def
 	
@@ -150,7 +150,7 @@ local get_account_formspec = function(market, account)
 	end
 	if show_itemnames then
 		table.sort(inventory, inventory_item_comp)
-	elseif show_description then
+	elseif show_descriptions then
 		table.sort(inventory, inventory_desc_comp)
 	end
 
@@ -170,7 +170,7 @@ local get_account_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = "text;"
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = "text;"
 	end
 	formspec[#formspec+1] = "text,align=center"
@@ -183,7 +183,7 @@ local get_account_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = ";text"
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = ";text"
 	end
 	formspec[#formspec+1] = ";text,align=center]"
@@ -195,7 +195,7 @@ local get_account_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = S("Item")..","
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = S("Description")..","
 	end
 	formspec[#formspec+1] = S("Quantity")
@@ -205,7 +205,7 @@ local get_account_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = ","..S("Item")
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = ","..S("Description")
 	end
 	formspec[#formspec+1] = ","..S("Quantity")
@@ -217,7 +217,7 @@ local get_account_formspec = function(market, account)
 		if show_itemnames then
 			formspec[#formspec+1] = "," .. truncate_string(entry.item, truncate_item_names_to)
 		end
-		if show_description then
+		if show_descriptions then
 			-- no need to formspec_escape description here, it gets done when it's initially added to the inventory table
 			formspec[#formspec+1] = "," .. entry.description
 		end
@@ -376,7 +376,7 @@ local get_market_formspec = function(market, account)
 	local selected = account.selected
 	local market_list = make_marketlist(market, account)
 	local show_itemnames = account.show_itemnames == "true"
-	local show_description = account.show_description == "true"
+	local show_descriptions = account.show_descriptions == "true"
 	local show_icons = global_enable_item_icons and ((account.show_icons or "true") == "true")
 	local anonymous = market_def.anonymous
 
@@ -397,7 +397,7 @@ local get_market_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = "text;" -- itemname
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = "text;" -- description
 	end
 	formspec[#formspec+1] = "color,span=2;"
@@ -417,7 +417,7 @@ local get_market_formspec = function(market, account)
 	if show_itemnames then
 		formspec[#formspec+1] = "Item," -- itemname
 	end
-	if show_description then
+	if show_descriptions then
 		formspec[#formspec+1] = S("Description") .. ","
 	end
 	formspec[#formspec+1] = "#00FF00,"..S("Buy Vol")..","..S("Buy Max")
@@ -435,7 +435,7 @@ local get_market_formspec = function(market, account)
 		if show_itemnames then
 			formspec[#formspec+1] = "," .. truncate_string(row.item, truncate_item_names_to)
 		end
-		if show_description then
+		if show_descriptions then
 			formspec[#formspec+1] = "," .. get_item_description(row.item)
 		end
 
@@ -625,8 +625,8 @@ local get_info_formspec = function(market, account)
 	formspec[#formspec+1] = "]container[0.5, 7.6]label[0,0;"..S("Settings")..":]checkbox[0,0.25;show_itemnames;"..S("Show Itemnames")..";"
 		..show_itemnames.."]"
 
-	local show_description = account.show_description or "false"
-	formspec[#formspec+1] = "checkbox[2.1,0.25;show_description;"..S("Show Description")..";"..show_description.."]"
+	local show_descriptions = account.show_descriptions or "false"
+	formspec[#formspec+1] = "checkbox[2.1,0.25;show_descriptions;"..S("Show Descriptions")..";"..show_descriptions.."]"
 
 	if global_enable_item_icons then
 		local show_icons = account.show_icons or "true"
@@ -790,14 +790,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			-- Find the item that was clicked on
 			local col_count = 8
 			local show_itemnames = account.show_itemnames == "true"
-			local show_description = account.show_description == "true"
+			local show_descriptions = account.show_descriptions == "true"
 			if not show_itemnames then
 				col_count = col_count - 2
 			end
 			if not show_icons then
 				col_count = col_count - 2
 			end
-			if not show_description then
+			if not show_descriptions then
 				col_count = col_count -2
 			end
 			local index = math.floor(((invevent.row-1)*col_count + invevent.column - 1)/(col_count/2)) - 1
@@ -811,7 +811,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			if show_itemnames then
 				table.sort(inventory, inventory_item_comp)
-			elseif show_description then
+			elseif show_descriptions then
 				table.sort(inventory, inventory_desc_comp)
 			end
 			if inventory[index] then
@@ -870,7 +870,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if process_checkbox("filter_participating", fields, account) then something_changed = true end
 	if process_checkbox("show_itemnames", fields, account) then something_changed = true end
-	if process_checkbox("show_description", fields, account) then something_changed = true end
+	if process_checkbox("show_descriptions", fields, account) then something_changed = true end
 	if process_checkbox("show_icons", fields, account) then something_changed = true end
 
 	if fields.acknowledge_log then
