@@ -98,7 +98,7 @@ Sell limit:=Limite de vente:
 #checkbox label
 Show Icons=Montrer les icônes
 Show Itemnames=Montrer les noms
-Show Description=Montrer les labels
+Show Descriptions=Montrer les labels
 Settings=Paramètres
 
 The name of the player who placed this order.@nDouble-click your own orders to cancel them.=Nom du joueur ayant placé l'offre.@nDouble-cliquer sur votre offres pour l'annuler

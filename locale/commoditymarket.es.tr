@@ -107,6 +107,7 @@ Sell Vol=Volumen de venta.
 Sell limit:=Limite de venta.
 #checkbox label
 Show Icons=Mostrar iconos
+Show Descriptions=
 #checkbox label
 Show Itemnames=Mostrar nombres de artículos
 Settings=
