@@ -584,7 +584,7 @@ local log_to_string = function(market, log_entry, account)
 	if not show_itemnames then
 		local item_def = minetest.registered_items[log_entry.item]
 		if item_def then
-			itemname = minetest.formspec_escape(item_def.description:gsub("\n", " "))
+			itemname = get_item_description(log_entry.item)
 		end
 	end
 
