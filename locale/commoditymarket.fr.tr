@@ -70,7 +70,7 @@ My orders=Mes commandes
 No logged activities in this market yet.=Pas de nouvelles sur le marchés
 
 #transaction log entry. @1 is a day number, @2 is a player name, @3 is a quantity of items, @4 is the item name, @5 is a player name, @6 is a currency symbol, @7 is a number (price), @8 is  the currency symbol again and @9 is a number (price)
-On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.=Le jour @1 @2 a vendu @3 @4 à @5 pour @6@7 chacun, soit un total de @8@9.
+On day @1 @2 sold @3 @4 to @5 at @6@7 each for a total of @8@9.=Le jour @1 : @3 @4 vendu à @5 par @2 pour @6@7 chacun, soit un total de @8@9.
 
 Order=Ordre
 Player=Joueur
